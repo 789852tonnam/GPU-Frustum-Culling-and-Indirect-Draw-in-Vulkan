@@ -1,15 +1,19 @@
 # GPU Culling in Vulkan
 
-## Current milestone: S2.1 - Vulkan instance
+## Current milestone: S2.2 - Physical-device enumeration
 
 A small C++20 application that creates a 960 x 540 GLFW window, processes events,
 and creates a Vulkan instance requesting API 1.3. The instance enables the window
 system extensions supplied by GLFW and is destroyed when the application exits.
+After instance creation, it lists the available Vulkan physical devices with
+their names, device types, and supported Vulkan API versions. Software devices
+are labeled as CPU implementations; this list does not select a device.
 Press Escape or use the window's close button to exit when the window is visible.
 The event loop waits between events instead of busy-spinning.
 
 This milestone does not select a GPU or create a device, Vulkan surface, swapchain,
-or rendered image. An instance alone does not prove device support for API 1.3.
+or rendered image. Reported API versions do not verify the individual features
+or presentation support that later device selection will require.
 On Wayland the window may not appear until its first image is presented. Use
 Ctrl+C in the terminal to stop a non-visible interactive run. Later milestones
 will add device selection, the swapchain, and a clear frame for the D1 skeleton.
@@ -53,11 +57,15 @@ Run with a Visual Studio multi-configuration build on Windows:
 For a short startup/shutdown check in a desktop session, append `--smoke-test`.
 It creates the same window and exits normally after about half a second.
 Successful startup prints `Vulkan instance created (requested API 1.3).` and normal
-shutdown prints `Vulkan instance destroyed.` This is not a rendering or GPU
+shutdown prints `Vulkan instance destroyed.` Between them it prints the device
+list. Enumeration errors or an empty list cause cleanup and a failure exit.
+The enumeration retries if Vulkan returns `VK_INCOMPLETE` because the list grew.
+Physical-device handles belong to the instance and need no separate destruction.
+This is not a rendering or GPU
 performance test.
 
 On Linux with the Khronos validation layer installed, an instance lifecycle check
-can also be run with:
+and device-enumeration check can also be run with:
 
 ```sh
 XDG_SESSION_TYPE=x11 VK_INSTANCE_LAYERS=VK_LAYER_KHRONOS_validation ./build/gpu_culling --smoke-test
@@ -68,11 +76,13 @@ does not yet install a debug messenger of its own.
 
 ## Code and attribution
 
-- `src/main.cpp`: window, Vulkan instance, event loop, and cleanup in one file.
+- `src/main.cpp`: window, Vulkan instance, device listing, event loop, and cleanup.
 - `CMakeLists.txt`: build target, GLFW dependency, and Vulkan loader linkage.
 - GLFW: <https://github.com/glfw/glfw/tree/3.4>, zlib/libpng license.
 - API reference: <https://www.glfw.org/docs/latest/vulkan_guide.html>.
 - Vulkan instance reference: <https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html>.
+- Device enumeration reference: <https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumeratePhysicalDevices.html>.
+- Device properties reference: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetPhysicalDeviceProperties.html>.
 
 AI assistance was used to draft this initial code and documentation. No external
 renderer or research implementation is included at this stage. Verification

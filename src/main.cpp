@@ -5,6 +5,65 @@
 #include <cstdlib>
 #include <iostream>
 #include <string_view>
+#include <vector>
+
+namespace {
+
+const char* deviceTypeName(VkPhysicalDeviceType type) {
+    switch (type) {
+    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: return "Integrated GPU";
+    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: return "Discrete GPU";
+    case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: return "Virtual GPU";
+    case VK_PHYSICAL_DEVICE_TYPE_CPU: return "CPU (software implementation)";
+    default: return "Other";
+    }
+}
+
+bool printPhysicalDevices(VkInstance instance) {
+    uint32_t deviceCount = 0;
+    std::vector<VkPhysicalDevice> devices;
+    VkResult result;
+
+    // Query the count, then retrieve the handles. Retry if the list grows.
+    do {
+        result = vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+        if (result != VK_SUCCESS) {
+            std::cerr << "Failed to count Vulkan devices. VkResult: " << result << '\n';
+            return false;
+        }
+        if (deviceCount == 0) {
+            std::cerr << "No Vulkan physical devices found.\n";
+            return false;
+        }
+
+        devices.resize(deviceCount);
+        result = vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+    } while (result == VK_INCOMPLETE);
+
+    if (result != VK_SUCCESS) {
+        std::cerr << "Failed to enumerate Vulkan devices. VkResult: " << result << '\n';
+        return false;
+    }
+    devices.resize(deviceCount);
+    if (devices.empty()) {
+        std::cerr << "No Vulkan physical devices found.\n";
+        return false;
+    }
+
+    std::cout << "Vulkan physical devices: " << deviceCount << '\n';
+    for (const VkPhysicalDevice device : devices) {
+        VkPhysicalDeviceProperties properties{};
+        vkGetPhysicalDeviceProperties(device, &properties);
+        std::cout << "  Name: " << properties.deviceName
+                  << "\n  Type: " << deviceTypeName(properties.deviceType)
+                  << "\n  Vulkan API: " << VK_API_VERSION_MAJOR(properties.apiVersion)
+                  << '.' << VK_API_VERSION_MINOR(properties.apiVersion)
+                  << '.' << VK_API_VERSION_PATCH(properties.apiVersion) << "\n\n";
+    }
+    return true;
+}
+
+} // namespace
 
 int main(int argc, char** argv) {
     const bool smokeTest = argc == 2 && std::string_view(argv[1]) == "--smoke-test";
@@ -23,7 +82,7 @@ int main(int argc, char** argv) {
 
     // Vulkan will handle rendering later; no OpenGL context is needed.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.1 Vulkan Instance", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.2 Device Enumeration", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return EXIT_FAILURE;
@@ -63,6 +122,12 @@ int main(int argc, char** argv) {
     }
 
     std::cout << "Vulkan instance created (requested API 1.3).\n";
+    if (!printPhysicalDevices(instance)) {
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
     const double startTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
