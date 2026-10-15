@@ -19,7 +19,48 @@ const char* deviceTypeName(VkPhysicalDeviceType type) {
     }
 }
 
-bool printPhysicalDevices(VkInstance instance) {
+bool printQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
+    uint32_t familyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, nullptr);
+    std::vector<VkQueueFamilyProperties> families(familyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, families.data());
+    families.resize(familyCount);
+
+    std::cout << "  Queue families: " << familyCount << '\n';
+    for (uint32_t index = 0; index < familyCount; ++index) {
+        const VkQueueFamilyProperties& family = families[index];
+        const bool graphics = (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0;
+        const bool compute = (family.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0;
+        // Graphics and compute queues also support transfer operations.
+        const bool transfer = (family.queueFlags &
+            (VK_QUEUE_TRANSFER_BIT | VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT)) != 0;
+        const bool sparse = (family.queueFlags & VK_QUEUE_SPARSE_BINDING_BIT) != 0;
+        const bool videoDecode = (family.queueFlags & VK_QUEUE_VIDEO_DECODE_BIT_KHR) != 0;
+        const bool videoEncode = (family.queueFlags & VK_QUEUE_VIDEO_ENCODE_BIT_KHR) != 0;
+
+        // Presentation support is specific to this family and this surface.
+        VkBool32 present = VK_FALSE;
+        const VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(device, index, surface, &present);
+        if (result != VK_SUCCESS) {
+            std::cerr << "Failed to query presentation support for queue family "
+                      << index << ". VkResult: " << result << '\n';
+            return false;
+        }
+
+        std::cout << "    Family " << index
+                  << " | Queues: " << family.queueCount
+                  << " | Graphics: " << (graphics ? "Yes" : "No")
+                  << " | Compute: " << (compute ? "Yes" : "No")
+                  << " | Present: " << (present == VK_TRUE ? "Yes" : "No") << '\n'
+                  << "      Transfer: " << (transfer ? "Yes" : "No")
+                  << " | Sparse binding: " << (sparse ? "Yes" : "No")
+                  << " | Video decode: " << (videoDecode ? "Yes" : "No")
+                  << " | Video encode: " << (videoEncode ? "Yes" : "No") << '\n';
+    }
+    return true;
+}
+
+bool printPhysicalDevices(VkInstance instance, VkSurfaceKHR surface) {
     uint32_t deviceCount = 0;
     std::vector<VkPhysicalDevice> devices;
     VkResult result;
@@ -58,7 +99,11 @@ bool printPhysicalDevices(VkInstance instance) {
                   << "\n  Type: " << deviceTypeName(properties.deviceType)
                   << "\n  Vulkan API: " << VK_API_VERSION_MAJOR(properties.apiVersion)
                   << '.' << VK_API_VERSION_MINOR(properties.apiVersion)
-                  << '.' << VK_API_VERSION_PATCH(properties.apiVersion) << "\n\n";
+                  << '.' << VK_API_VERSION_PATCH(properties.apiVersion) << '\n';
+        if (!printQueueFamilies(device, surface)) {
+            return false;
+        }
+        std::cout << '\n';
     }
     return true;
 }
@@ -82,7 +127,7 @@ int main(int argc, char** argv) {
 
     // Vulkan will handle rendering later; no OpenGL context is needed.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.3 Window Surface", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.4 Queue Inspection", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return EXIT_FAILURE;
@@ -122,13 +167,6 @@ int main(int argc, char** argv) {
     }
 
     std::cout << "Vulkan instance created (requested API 1.3).\n";
-    if (!printPhysicalDevices(instance)) {
-        vkDestroyInstance(instance, nullptr);
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
-
     VkSurfaceKHR surface = VK_NULL_HANDLE;
     const VkResult surfaceResult = glfwCreateWindowSurface(instance, window, nullptr, &surface);
     if (surfaceResult != VK_SUCCESS) {
@@ -139,6 +177,14 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
     std::cout << "Vulkan window surface created.\n";
+
+    if (!printPhysicalDevices(instance, surface)) {
+        vkDestroySurfaceKHR(instance, surface, nullptr);
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
     const double startTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
