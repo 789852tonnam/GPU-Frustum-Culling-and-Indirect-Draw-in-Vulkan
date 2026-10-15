@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 
     // Vulkan will handle rendering later; no OpenGL context is needed.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.2 Device Enumeration", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.3 Window Surface", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return EXIT_FAILURE;
@@ -128,6 +128,17 @@ int main(int argc, char** argv) {
         glfwTerminate();
         return EXIT_FAILURE;
     }
+
+    VkSurfaceKHR surface = VK_NULL_HANDLE;
+    const VkResult surfaceResult = glfwCreateWindowSurface(instance, window, nullptr, &surface);
+    if (surfaceResult != VK_SUCCESS) {
+        std::cerr << "Failed to create Vulkan window surface. VkResult: " << surfaceResult << '\n';
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+    std::cout << "Vulkan window surface created.\n";
     const double startTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
@@ -138,6 +149,9 @@ int main(int argc, char** argv) {
         }
     }
 
+    // The surface must be released before its instance and native window.
+    vkDestroySurfaceKHR(instance, surface, nullptr);
+    std::cout << "Vulkan window surface destroyed.\n";
     vkDestroyInstance(instance, nullptr);
     std::cout << "Vulkan instance destroyed.\n";
     glfwDestroyWindow(window);
