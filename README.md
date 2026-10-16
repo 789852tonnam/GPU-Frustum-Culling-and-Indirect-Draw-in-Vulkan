@@ -1,6 +1,6 @@
 # GPU Culling in Vulkan
 
-## Current milestone: S2.7 - Swapchain and image views
+## Current milestone: S2.8 - Clear and present frames
 
 A small C++20 application that creates a 960 x 540 GLFW window, processes events,
 and creates a Vulkan instance requesting API 1.3. The instance enables the window
@@ -21,14 +21,16 @@ chosen GPU and family. From `DeviceSelection` it creates one logical device with
 one queue at priority 1.0 from the selected graphics/compute/present family, then
 retrieves queue index 0 with `vkGetDeviceQueue`.
 It then creates a swapchain, retrieves its images, and creates one 2D color image
-view per image, stored in `SwapchainState`.
-On exit, it destroys the image views and swapchain before the logical device
-(which owns the queue), then the surface, instance, and native window. No GPU
-work is submitted yet, so shutdown needs no device-idle wait in this milestone.
+view per image, stored in `SwapchainState`. A single-frame rendering loop acquires
+an image, clears it dark blue using dynamic rendering, and submits it for FIFO
+presentation. No graphics pipeline, shaders, or draw calls are needed for a clear.
+On exit, it waits for the device, releases frame resources, then destroys the image
+views, swapchain, logical device (which owns the queue), surface, instance, and
+native window.
 Query errors also release the surface, instance, and GLFW resources before
 returning failure; unsupported presentation is printed as `No`, not an error.
 Press Escape or use the window's close button to exit when the window is visible.
-The event loop waits between events instead of busy-spinning.
+The event loop polls input between frames; FIFO presentation supplies pacing.
 
 The selection policy requires:
 
@@ -64,20 +66,48 @@ The swapchain uses:
 
 Startup with a zero-size framebuffer/extent reports failure with cleanup. This
 step creates the swapchain once; resize/minimize recovery and swapchain recreation
-will be added with the rendering loop. Image-query or image-view creation failure
+remain the next milestone. Image-query or image-view creation failure
 destroys any views already created and the swapchain before device teardown.
 Swapchain images are owned by the swapchain and are not separately destroyed.
 
-This milestone does not acquire images, record command buffers, draw, or present.
+## Frame loop
+
+General `VkResult` success/error checks share the local `checkVulkan` helper.
+Retry/usable statuses such as `VK_INCOMPLETE`, `VK_TIMEOUT`, and
+`VK_SUBOPTIMAL_KHR`, and the recreation-needed status `VK_ERROR_OUT_OF_DATE_KHR`,
+are handled by the caller first. Successful queries with empty required lists
+are checked separately from API errors.
+
+- `FrameState` owns one command pool/primary command buffer, one initially signaled
+  submission fence, one image-available semaphore, and one render-finished semaphore
+  per swapchain image. Partial initialization is cleaned up by the caller.
+- Wait for the previous submission fence before reusing the command pool and the
+  image-available semaphore. Acquire with a finite timeout; a timeout retries via
+  the event loop. Reset the fence only immediately before submission, so an early
+  acquire return does not leave the next frame waiting for nonexistent work.
+- Record synchronization2 image barriers into color-attachment layout and then
+  presentation layout. Discard previous image contents because the full image is
+  cleared each frame. Dynamic rendering uses CLEAR/STORE with linear RGBA
+  `(0.02, 0.06, 0.15, 1.0)`.
+- Submit using `vkQueueSubmit2`, waiting on image availability at color-attachment
+  output. Signal the acquired image's render-finished semaphore after all commands;
+  `vkQueuePresentKHR` waits on that semaphore. Buffering these semaphores by image
+  avoids reusing one while presentation is still waiting on it.
+- `VK_SUBOPTIMAL_KHR` is still usable. `VK_ERROR_OUT_OF_DATE_KHR` reports that
+  recreation is needed and exits with code 1 after cleanup; automatic recreation
+  and minimized-window handling are not implemented yet.
+- Shutdown uses the usual unextended-Vulkan `vkDeviceWaitIdle` approach. This waits
+  for submitted GPU work; it is not a formal presentation-completion fence.
+  Explicit presentation fences require a maintenance extension, outside this step.
+
 Only the two requested Vulkan 1.3 features are enabled; other queried features
 are not enabled wholesale. Indirect-draw/culling features will be checked and
 enabled when implementing those later milestones. Surface formats and
 present modes are counted here; their actual values and current surface capabilities
 must be queried again when constructing or recreating the swapchain.
-On Wayland the window may not appear until its first image is presented. Creating
-a swapchain alone does not make it visible. Use
-Ctrl+C in the terminal to stop a non-visible interactive run. Later milestones
-will add a clear frame and resize handling for the D1 skeleton.
+The first presentation now supplies window content, including on Wayland. Native
+Wayland behavior still needs separate verification; local verification is recorded
+in the external AI log. Resize handling remains for the D1 skeleton.
 
 ## Build
 
@@ -100,7 +130,7 @@ Run on Linux:
 ./build/gpu_culling
 ```
 
-To display this early window through X11/XWayland on the Fedora setup:
+To select X11/XWayland on the Fedora setup:
 
 ```sh
 XDG_SESSION_TYPE=x11 ./build/gpu_culling
@@ -115,24 +145,27 @@ Run with a Visual Studio multi-configuration build on Windows:
 .\build\Debug\gpu_culling.exe
 ```
 
-For a short startup/shutdown check in a desktop session, append `--smoke-test`.
-It creates the same window and exits normally after about half a second.
+For a short rendering/shutdown check in a desktop session, append `--smoke-test`.
+It runs the same frame loop for about half a second and requires at least one
+successful presentation request before returning success. This is not proof of
+physical display visibility or a GPU performance benchmark.
 Successful startup prints `Vulkan instance created (requested API 1.3).` and normal
 shutdown prints `Vulkan instance destroyed.` Between them it prints
 `Vulkan window surface created.`, the device/queue-family list and selection reasons,
 `Selected GPU:` and `Selected queue family:`, logical-device creation/queue
 acquisition messages, swapchain size/image count/format/color-space enums/FIFO
-mode and image-view count, then image-view/swapchain destruction,
+mode and image-view count, frame-resource creation, first-frame presentation
+submission and total presented-request count, then frame/image-view/swapchain destruction,
 `Logical device destroyed; its queue is released with it.`, then
 `Vulkan window surface destroyed.` A positive presentation-support query is
 a capability report, not an actual image-presentation test.
 Enumeration errors or an empty list cause cleanup and a failure exit.
 The enumeration retries if Vulkan returns `VK_INCOMPLETE`.
 Physical-device handles belong to the instance and need no separate destruction.
-This is not a rendering or GPU performance test.
+No culling or scene geometry is implemented yet.
 
 On Linux with the Khronos validation layer installed, an instance/surface lifecycle
-and device/swapchain/image-view lifecycle check can also be run with:
+and frame synchronization/lifecycle check can also be run with:
 
 ```sh
 XDG_SESSION_TYPE=x11 VK_INSTANCE_LAYERS=VK_LAYER_KHRONOS_validation ./build/gpu_culling --smoke-test
@@ -144,7 +177,7 @@ does not yet install a debug messenger of its own.
 ## Code and attribution
 
 - `src/main.cpp`: window, instance, surface, GPU selection, logical-device/queue,
-  swapchain/image-view creation, event loop, and cleanup in one file.
+  swapchain/image views, frame resources, clear/present loop, and cleanup in one file.
 - `CMakeLists.txt`: build target, GLFW dependency, and Vulkan loader linkage.
 - GLFW: <https://github.com/glfw/glfw/tree/3.4>, zlib/libpng license.
 - API reference: <https://www.glfw.org/docs/latest/vulkan_guide.html>.
@@ -167,6 +200,9 @@ does not yet install a debug messenger of its own.
 - Swapchain images: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetSwapchainImagesKHR.html>.
 - Image views: <https://docs.vulkan.org/refpages/latest/refpages/source/VkImageViewCreateInfo.html>.
 - FIFO presentation: <https://docs.vulkan.org/refpages/latest/refpages/source/VkPresentModeKHR.html>.
+- Dynamic rendering: <https://docs.vulkan.org/refpages/latest/refpages/source/vkCmdBeginRendering.html>.
+- Synchronization examples: <https://docs.vulkan.org/guide/latest/synchronization_examples.html>.
+- Presentation semaphore reuse and shutdown limits: <https://docs.vulkan.org/guide/latest/swapchain_semaphore_reuse.html>.
 
 AI assistance was used to draft this initial code and documentation. No external
 renderer or research implementation is included at this stage. Verification
