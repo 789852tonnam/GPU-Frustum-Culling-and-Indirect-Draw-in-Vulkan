@@ -243,6 +243,45 @@ bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, DeviceSelec
     return true;
 }
 
+bool createLogicalDevice(const DeviceSelection& selection, VkDevice& device, VkQueue& queue) {
+    device = VK_NULL_HANDLE;
+    queue = VK_NULL_HANDLE;
+
+    const float queuePriority = 1.0f;
+    VkDeviceQueueCreateInfo queueInfo{};
+    queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueInfo.queueFamilyIndex = selection.queueFamilyIndex;
+    queueInfo.queueCount = 1;
+    queueInfo.pQueuePriorities = &queuePriority;
+
+    // Enable only the features already checked during GPU selection.
+    VkPhysicalDeviceVulkan13Features enabledFeatures{};
+    enabledFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    enabledFeatures.dynamicRendering = VK_TRUE;
+    enabledFeatures.synchronization2 = VK_TRUE;
+
+    const char* extensions[] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+    VkDeviceCreateInfo deviceInfo{};
+    deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceInfo.pNext = &enabledFeatures;
+    deviceInfo.queueCreateInfoCount = 1;
+    deviceInfo.pQueueCreateInfos = &queueInfo;
+    deviceInfo.enabledExtensionCount = 1;
+    deviceInfo.ppEnabledExtensionNames = extensions;
+
+    const VkResult result = vkCreateDevice(selection.device, &deviceInfo, nullptr, &device);
+    if (result != VK_SUCCESS) {
+        std::cerr << "Failed to create logical device. VkResult: " << result << '\n';
+        return false;
+    }
+
+    // Queue index 0 is the first (and only) queue requested from this family.
+    vkGetDeviceQueue(device, selection.queueFamilyIndex, 0, &queue);
+    std::cout << "Logical device created; dynamicRendering, synchronization2, and VK_KHR_swapchain enabled.\n"
+              << "Queue acquired: family " << selection.queueFamilyIndex << ", queue index 0.\n";
+    return true;
+}
+
 } // namespace
 
 int main(int argc, char** argv) {
@@ -262,7 +301,7 @@ int main(int argc, char** argv) {
 
     // Vulkan will handle rendering later; no OpenGL context is needed.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.5 GPU Selection", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.6 Logical Device", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return EXIT_FAILURE;
@@ -327,6 +366,16 @@ int main(int argc, char** argv) {
               << "\nSelected queue family: " << selection.queueFamilyIndex
               << " (graphics + compute + present)\n"
               << "Preference: discrete > integrated > virtual > other; ties keep the first eligible device.\n";
+
+    VkDevice device = VK_NULL_HANDLE;
+    VkQueue queue = VK_NULL_HANDLE;
+    if (!createLogicalDevice(selection, device, queue)) {
+        vkDestroySurfaceKHR(instance, surface, nullptr);
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
     const double startTime = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
@@ -337,6 +386,9 @@ int main(int argc, char** argv) {
         }
     }
 
+    // No GPU work has been submitted in this milestone, so no idle wait is needed.
+    vkDestroyDevice(device, nullptr);
+    std::cout << "Logical device destroyed; its queue is released with it.\n";
     // The surface must be released before its instance and native window.
     vkDestroySurfaceKHR(instance, surface, nullptr);
     std::cout << "Vulkan window surface destroyed.\n";
