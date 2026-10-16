@@ -17,7 +17,16 @@ if(NOT TARGET glfw)
     FetchContent_MakeAvailable(glfw)
 endif()
 
-add_executable(gpu_culling src/main.cpp)
+add_executable(gpu_culling
+    src/main.cpp
+    src/device.cpp
+    src/device.hpp
+    src/swapchain.cpp
+    src/swapchain.hpp
+    src/frame.cpp
+    src/frame.hpp
+    src/vulkan_utils.hpp
+)
 target_compile_features(gpu_culling PRIVATE cxx_std_20)
 set_target_properties(gpu_culling PROPERTIES CXX_EXTENSIONS OFF)
 target_link_libraries(gpu_culling PRIVATE glfw Vulkan::Vulkan)

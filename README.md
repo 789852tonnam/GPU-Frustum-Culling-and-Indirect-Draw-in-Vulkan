@@ -176,9 +176,28 @@ does not yet install a debug messenger of its own.
 
 ## Code and attribution
 
-- `src/main.cpp`: window, instance, surface, GPU selection, logical-device/queue,
-  swapchain/image views, frame resources, clear/present loop, and cleanup in one file.
-- `CMakeLists.txt`: build target, GLFW dependency, and Vulkan loader linkage.
+Source is divided by responsibility while retaining the S2.8 behavior:
+
+- `src/main.cpp`: window, instance and surface creation; startup sequence, event
+  loop, calls to drawFrame, and shutdown order.
+- `src/device.hpp` / `src/device.cpp`: DeviceSelection, physical-device selection
+  and logical-device/queue creation. Device inspection helpers are private to
+  device.cpp in an anonymous namespace.
+- `src/swapchain.hpp` / `src/swapchain.cpp`: SwapchainState, swapchain/image-view
+  creation, and their cleanup. The header forward-declares GLFWwindow; only the
+  implementation needs the GLFW header.
+- `src/frame.hpp` / `src/frame.cpp`: FrameState, FrameResult, frame-resource
+  creation/cleanup, command recording, submission, and presentation.
+- `src/vulkan_utils.hpp`: shared inline checkVulkan helper. Inline allows the
+  header's definition to be included in multiple translation units.
+- Headers expose shared structs and function declarations; .cpp files hold the
+  implementations. To follow execution, start in main.cpp and open the module
+  corresponding to the function call being read.
+- `CMakeLists.txt`: all four .cpp files in one executable, GLFW dependency, and
+  Vulkan loader linkage. This reorganization adds no new dependency or feature.
+
+References and attribution:
+
 - GLFW: <https://github.com/glfw/glfw/tree/3.4>, zlib/libpng license.
 - API reference: <https://www.glfw.org/docs/latest/vulkan_guide.html>.
 - Vulkan instance reference: <https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html>.
