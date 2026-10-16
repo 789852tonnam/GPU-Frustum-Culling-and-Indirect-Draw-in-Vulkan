@@ -10,6 +10,55 @@
 #include <iostream>
 #include <string_view>
 
+namespace {
+
+// Keep receiving window events while rendering is paused. A minimized window
+// may keep a nonzero framebuffer size on X11, so check ICONIFIED as well.
+bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0) {
+    bool paused = false;
+    while (!glfwWindowShouldClose(window)) {
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
+            (closeAt > 0.0 && glfwGetTime() >= closeAt)) {
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+            return false;
+        }
+        int width = 0;
+        int height = 0;
+        glfwGetFramebufferSize(window, &width, &height);
+        if (width > 0 && height > 0 && !glfwGetWindowAttrib(window, GLFW_ICONIFIED)) {
+            if (paused) {
+                std::cout << "Window drawable again; resuming.\n";
+            }
+            return true;
+        }
+        if (!paused) {
+            std::cout << "Rendering paused: window minimized or framebuffer has zero size.\n";
+            paused = true;
+        }
+        glfwWaitEventsTimeout(0.05);
+    }
+    return false;
+}
+
+bool recreateSwapchain(const DeviceSelection& selection, VkDevice device,
+                       VkSurfaceKHR surface, GLFWwindow* window,
+                       SwapchainState& swapchain, FrameState& frame) {
+    // Resize is infrequent: finish old work, then rebuild dependent objects.
+    // Rebuilding FrameState also updates its per-image semaphore count and
+    // starts with fresh synchronization objects after an out-of-date result.
+    if (!checkVulkan(vkDeviceWaitIdle(device), "Wait for device before swapchain recreation")) {
+        return false;
+    }
+    destroyFrameState(device, frame);
+    destroySwapchain(device, swapchain);
+    if (!createSwapchain(selection.device, device, surface, window, swapchain)) {
+        return false;
+    }
+    return createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
+}
+
+} // namespace
+
 int main(int argc, char** argv) {
     const bool smokeTest = argc == 2 && std::string_view(argv[1]) == "--smoke-test";
     if (argc > 1 && !smokeTest) {
@@ -27,11 +76,23 @@ int main(int argc, char** argv) {
 
     // Vulkan handles rendering; no OpenGL context is needed.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.8 Clear Frame", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.9 Resize", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return EXIT_FAILURE;
     }
+
+    // Callbacks only request a rebuild; Vulkan work stays in the main loop.
+    bool framebufferResized = false;
+    glfwSetWindowUserPointer(window, &framebufferResized);
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* resizedWindow, int, int) {
+        auto* resized = static_cast<bool*>(glfwGetWindowUserPointer(resizedWindow));
+        *resized = true;
+    });
+    glfwSetWindowIconifyCallback(window, [](GLFWwindow* changedWindow, int) {
+        auto* resized = static_cast<bool*>(glfwGetWindowUserPointer(changedWindow));
+        *resized = true;
+    });
 
     std::cout << "GLFW window created (960x540). Press Escape or close the window to exit.\n";
 
@@ -101,6 +162,17 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
+    // The window may have been minimized while device setup was running.
+    glfwPollEvents();
+    if (!waitForDrawableWindow(window)) {
+        vkDestroyDevice(device, nullptr);
+        vkDestroySurfaceKHR(instance, surface, nullptr);
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return smokeTest ? EXIT_FAILURE : EXIT_SUCCESS;
+    }
+
     SwapchainState swapchain{};
     if (!createSwapchain(selection.device, device, surface, window, swapchain)) {
         vkDestroyDevice(device, nullptr);
@@ -112,7 +184,9 @@ int main(int argc, char** argv) {
     }
     FrameState frame{};
     bool success = createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
+    framebufferResized = false;
     uint64_t presentedFrames = 0;
+    uint32_t swapchainRecreations = 0;
     const double startTime = glfwGetTime();
 
     while (success && !glfwWindowShouldClose(window)) {
@@ -124,10 +198,22 @@ int main(int argc, char** argv) {
         if (glfwWindowShouldClose(window)) {
             break;
         }
+        if (!waitForDrawableWindow(window, smokeTest ? startTime + 0.5 : 0.0)) {
+            break;
+        }
+        if (framebufferResized) {
+            success = recreateSwapchain(selection, device, surface, window, swapchain, frame);
+            if (success) {
+                framebufferResized = false;
+                ++swapchainRecreations;
+                std::cout << "Swapchain recreation completed.\n";
+            }
+            continue;
+        }
         const FrameResult frameResult = drawFrame(device, queue, swapchain, frame);
         if (frameResult == FrameResult::OutOfDate) {
-            std::cerr << "Swapchain is out of date; recreation will be added in the next milestone.\n";
-            success = false;
+            std::cout << "Swapchain is out of date; requesting recreation.\n";
+            framebufferResized = true;
         } else if (frameResult == FrameResult::Failed) {
             success = false;
         } else if (frameResult == FrameResult::Presented) {
@@ -142,11 +228,12 @@ int main(int argc, char** argv) {
         success = false;
     }
 
-    // Small skeleton: wait once at shutdown, not after every submitted frame.
+    // Wait at shutdown (and during recreation), not after every submitted frame.
     if (!checkVulkan(vkDeviceWaitIdle(device), "Wait for device at shutdown")) {
         success = false;
     }
     std::cout << "Frames submitted for presentation: " << presentedFrames << '\n';
+    std::cout << "Swapchain recreations: " << swapchainRecreations << '\n';
     destroyFrameState(device, frame);
     std::cout << "Frame resources destroyed.\n";
     destroySwapchain(device, swapchain);

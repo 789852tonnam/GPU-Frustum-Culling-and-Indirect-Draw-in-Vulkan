@@ -1,6 +1,6 @@
 # GPU Culling in Vulkan
 
-## Current milestone: S2.8 - Clear and present frames
+## Current milestone: S2.9 - Resize and minimize recovery
 
 A small C++20 application that creates a 960 x 540 GLFW window, processes events,
 and creates a Vulkan instance requesting API 1.3. The instance enables the window
@@ -64,10 +64,16 @@ The swapchain uses:
   surface transform, and opaque composite alpha when supported (otherwise the
   first supported alpha mode).
 
-Startup with a zero-size framebuffer/extent reports failure with cleanup. This
-step creates the swapchain once; resize/minimize recovery and swapchain recreation
-remain the next milestone. Image-query or image-view creation failure
-destroys any views already created and the swapchain before device teardown.
+The main loop handles framebuffer resize and iconify events. It pauses rendering
+while the window is iconified or the framebuffer has zero width/height, including
+before initial swapchain creation. The pause continues to process window events
+and Escape/close requests; the smoke-test deadline also applies during an in-loop
+pause. On restore or resize it waits for old GPU work, destroys frame resources
+and the old swapchain/views, then recreates them using current surface properties.
+Rebuilding FrameState keeps presentation semaphores matched to the new image count
+and gives the new swapchain fresh synchronization objects. Image-query or image-view
+creation failure destroys any views already created and the swapchain before
+device teardown.
 Swapchain images are owned by the swapchain and are not separately destroyed.
 
 ## Frame loop
@@ -93,11 +99,14 @@ are checked separately from API errors.
   output. Signal the acquired image's render-finished semaphore after all commands;
   `vkQueuePresentKHR` waits on that semaphore. Buffering these semaphores by image
   avoids reusing one while presentation is still waiting on it.
-- `VK_SUBOPTIMAL_KHR` is still usable. `VK_ERROR_OUT_OF_DATE_KHR` reports that
-  recreation is needed and exits with code 1 after cleanup; automatic recreation
-  and minimized-window handling are not implemented yet.
-- Shutdown uses the usual unextended-Vulkan `vkDeviceWaitIdle` approach. This waits
-  for submitted GPU work; it is not a formal presentation-completion fence.
+- `VK_SUBOPTIMAL_KHR` remains usable. `VK_ERROR_OUT_OF_DATE_KHR` requests a
+  rebuild in main instead of terminating. Resize/iconify callbacks also request
+  a rebuild, even on platforms that do not report OUT_OF_DATE for every resize.
+  Callbacks only set a flag; resource work happens between drawFrame calls.
+  Query, allocation, device-loss, and other unrecoverable errors still exit with
+  code 1 after cleanup. Surface-loss/device-loss recovery is outside this skeleton.
+- Shutdown/recreation use the usual unextended-Vulkan `vkDeviceWaitIdle` approach.
+  This waits for submitted GPU work; it is not a formal presentation-completion fence.
   Explicit presentation fences require a maintenance extension, outside this step.
 
 Only the two requested Vulkan 1.3 features are enabled; other queried features
@@ -105,9 +114,10 @@ are not enabled wholesale. Indirect-draw/culling features will be checked and
 enabled when implementing those later milestones. Surface formats and
 present modes are counted here; their actual values and current surface capabilities
 must be queried again when constructing or recreating the swapchain.
-The first presentation now supplies window content, including on Wayland. Native
-Wayland behavior still needs separate verification; local verification is recorded
-in the external AI log. Resize handling remains for the D1 skeleton.
+The first presentation supplies window content. Native Wayland behavior still
+needs separate verification; local X11/XWayland verification is recorded in the
+external AI log. Minimize detection checks GLFW_ICONIFIED as well as framebuffer
+size, because some platforms keep a nonzero framebuffer while iconified.
 
 ## Build
 
@@ -176,10 +186,12 @@ does not yet install a debug messenger of its own.
 
 ## Code and attribution
 
-Source is divided by responsibility while retaining the S2.8 behavior:
+Source is divided by responsibility:
 
 - `src/main.cpp`: window, instance and surface creation; startup sequence, event
-  loop, calls to drawFrame, and shutdown order.
+  loop, calls to drawFrame, and shutdown order. The new waitForDrawableWindow and
+  recreateSwapchain helpers and resize/iconify callbacks stay here for the code
+  walkthrough; resize logic has not been moved into another module.
 - `src/device.hpp` / `src/device.cpp`: DeviceSelection, physical-device selection
   and logical-device/queue creation. Device inspection helpers are private to
   device.cpp in an anonymous namespace.
@@ -194,7 +206,7 @@ Source is divided by responsibility while retaining the S2.8 behavior:
   implementations. To follow execution, start in main.cpp and open the module
   corresponding to the function call being read.
 - `CMakeLists.txt`: all four .cpp files in one executable, GLFW dependency, and
-  Vulkan loader linkage. This reorganization adds no new dependency or feature.
+  Vulkan loader linkage. No new dependency is needed for resize support.
 
 References and attribution:
 
@@ -222,6 +234,7 @@ References and attribution:
 - Dynamic rendering: <https://docs.vulkan.org/refpages/latest/refpages/source/vkCmdBeginRendering.html>.
 - Synchronization examples: <https://docs.vulkan.org/guide/latest/synchronization_examples.html>.
 - Presentation semaphore reuse and shutdown limits: <https://docs.vulkan.org/guide/latest/swapchain_semaphore_reuse.html>.
+- Swapchain recreation and minimization: <https://docs.vulkan.org/tutorial/latest/03_Drawing_a_triangle/04_Swap_chain_recreation.html>.
 
 AI assistance was used to draft this initial code and documentation. No external
 renderer or research implementation is included at this stage. Verification
