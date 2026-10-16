@@ -1,6 +1,6 @@
 # GPU Culling in Vulkan
 
-## Current milestone: S2.4 - Queue families and presentation support
+## Current milestone: S2.5 - GPU and queue-family selection
 
 A small C++20 application that creates a 960 x 540 GLFW window, processes events,
 and creates a Vulkan instance requesting API 1.3. The instance enables the window
@@ -15,20 +15,42 @@ binding, video decode, and video encode support. Transfer is also reported for
 graphics/compute families, where Vulkan implicitly supports transfer operations
 even if the explicit transfer flag is absent. These are capability reports;
 video codec/feature support is not inspected and no video work is performed.
-It does not select a device or request queues.
+It then selects an eligible physical device and queue-family index, printing the
+chosen GPU and family. The selected handles/indices are stored in `DeviceSelection`
+for the next milestone; this step does not create a logical device or request queues.
 On exit, it destroys the surface before destroying the instance and native window.
 Query errors also release the surface, instance, and GLFW resources before
 returning failure; unsupported presentation is printed as `No`, not an error.
 Press Escape or use the window's close button to exit when the window is visible.
 The event loop waits between events instead of busy-spinning.
 
-This milestone does not select a GPU or create a logical device, swapchain,
-or rendered image. Reported API versions and queue capabilities do not verify
-the individual device features, swapchain extension, surface formats, or present
-modes that later device selection and swapchain creation will require.
+The selection policy requires:
+
+- Vulkan API variant 0, version 1.3 or newer.
+- A non-CPU device; software CPU implementations are still listed but skipped.
+- One queue family with at least one queue and graphics + compute + presentation
+  support for this window surface. Split graphics/present families are deliberately
+  outside this first skeleton's policy, even though Vulkan can support them.
+- `dynamicRendering` and `synchronization2` support, queried with
+  `VkPhysicalDeviceFeatures2` and `VkPhysicalDeviceVulkan13Features`.
+- `VK_KHR_swapchain`, at least one surface format and present mode, and support
+  for `VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT` on swapchain images.
+
+Among eligible devices, preference is discrete > integrated > virtual > other.
+Devices with equal priority keep enumeration order; the first eligible family
+within each device is used. This is a simple policy, not a performance measurement.
+Unsupported requirements print a reason and skip that device. Query errors abort
+inspection with cleanup; no eligible GPU produces a failure exit. A CPU-only
+system therefore fails intentionally rather than silently selecting software rendering.
+
+This milestone does not create a logical device, swapchain, or rendered image.
+Supported features are only queried, not enabled. Indirect-draw/culling features
+will be checked when implementing those later milestones. Surface formats and
+present modes are counted here; their actual values and current surface capabilities
+must be queried again when constructing or recreating the swapchain.
 On Wayland the window may not appear until its first image is presented. Use
 Ctrl+C in the terminal to stop a non-visible interactive run. Later milestones
-will add device selection, the swapchain, and a clear frame for the D1 skeleton.
+will add a logical device, the swapchain, and a clear frame for the D1 skeleton.
 
 ## Build
 
@@ -70,7 +92,8 @@ For a short startup/shutdown check in a desktop session, append `--smoke-test`.
 It creates the same window and exits normally after about half a second.
 Successful startup prints `Vulkan instance created (requested API 1.3).` and normal
 shutdown prints `Vulkan instance destroyed.` Between them it prints
-`Vulkan window surface created.`, the device/queue-family list, then
+`Vulkan window surface created.`, the device/queue-family list and selection reasons,
+`Selected GPU:` and `Selected queue family:`, then
 `Vulkan window surface destroyed.` A positive presentation-support query is
 a capability report, not an actual image-presentation test.
 Enumeration errors or an empty list cause cleanup and a failure exit.
@@ -79,7 +102,7 @@ Physical-device handles belong to the instance and need no separate destruction.
 This is not a rendering or GPU performance test.
 
 On Linux with the Khronos validation layer installed, an instance/surface lifecycle
-and device/queue inspection check can also be run with:
+and device-selection check can also be run with:
 
 ```sh
 XDG_SESSION_TYPE=x11 VK_INSTANCE_LAYERS=VK_LAYER_KHRONOS_validation ./build/gpu_culling --smoke-test
@@ -90,7 +113,8 @@ does not yet install a debug messenger of its own.
 
 ## Code and attribution
 
-- `src/main.cpp`: window, instance, surface, device/queue inspection, event loop, and cleanup.
+- `src/main.cpp`: window, instance, surface, device/queue inspection and selection,
+  event loop, and cleanup in one file.
 - `CMakeLists.txt`: build target, GLFW dependency, and Vulkan loader linkage.
 - GLFW: <https://github.com/glfw/glfw/tree/3.4>, zlib/libpng license.
 - API reference: <https://www.glfw.org/docs/latest/vulkan_guide.html>.
@@ -102,6 +126,10 @@ does not yet install a debug messenger of its own.
 - Queue family reference: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetPhysicalDeviceQueueFamilyProperties.html>.
 - Presentation query reference: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetPhysicalDeviceSurfaceSupportKHR.html>.
 - Queue capability flags: <https://docs.vulkan.org/refpages/latest/refpages/source/VkQueueFlagBits.html>.
+- Feature query reference: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetPhysicalDeviceFeatures2.html>.
+- Vulkan 1.3 feature reference: <https://docs.vulkan.org/refpages/latest/refpages/source/VkPhysicalDeviceVulkan13Features.html>.
+- Device extensions: <https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumerateDeviceExtensionProperties.html>.
+- Surface capabilities: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetPhysicalDeviceSurfaceCapabilitiesKHR.html>.
 
 AI assistance was used to draft this initial code and documentation. No external
 renderer or research implementation is included at this stage. Verification
