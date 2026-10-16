@@ -1,6 +1,6 @@
 # GPU Culling in Vulkan
 
-## Current milestone: S2.6 - Logical device and queue
+## Current milestone: S2.7 - Swapchain and image views
 
 A small C++20 application that creates a 960 x 540 GLFW window, processes events,
 and creates a Vulkan instance requesting API 1.3. The instance enables the window
@@ -20,9 +20,11 @@ chosen GPU and family. From `DeviceSelection` it creates one logical device with
 `dynamicRendering`, `synchronization2`, and `VK_KHR_swapchain` enabled. It requests
 one queue at priority 1.0 from the selected graphics/compute/present family, then
 retrieves queue index 0 with `vkGetDeviceQueue`.
-On exit, it destroys the logical device (which owns the queue), then the surface,
-instance, and native window. No GPU work is submitted yet, so shutdown needs no
-device-idle wait in this milestone.
+It then creates a swapchain, retrieves its images, and creates one 2D color image
+view per image, stored in `SwapchainState`.
+On exit, it destroys the image views and swapchain before the logical device
+(which owns the queue), then the surface, instance, and native window. No GPU
+work is submitted yet, so shutdown needs no device-idle wait in this milestone.
 Query errors also release the surface, instance, and GLFW resources before
 returning failure; unsupported presentation is printed as `No`, not an error.
 Press Escape or use the window's close button to exit when the window is visible.
@@ -47,15 +49,35 @@ Unsupported requirements print a reason and skip that device. Query errors abort
 inspection with cleanup; no eligible GPU produces a failure exit. A CPU-only
 system therefore fails intentionally rather than silently selecting software rendering.
 
-This milestone does not create a swapchain, command buffers, or rendered image.
+The swapchain uses:
+
+- FIFO presentation, guaranteed by Vulkan for ordinary window surfaces.
+- BGRA8 sRGB with the sRGB nonlinear color space when available; otherwise the
+  first advertised surface format with optimal-tiling color-attachment support.
+- The required current surface extent, or the actual GLFW framebuffer pixel size
+  clamped to the supported extent range when the surface leaves the size to us.
+- One image above the minimum when allowed, respecting a finite maximum and the
+  special unlimited `maxImageCount == 0` case. The actual image count is queried.
+- Exclusive sharing for the unified queue family, one image layer, the current
+  surface transform, and opaque composite alpha when supported (otherwise the
+  first supported alpha mode).
+
+Startup with a zero-size framebuffer/extent reports failure with cleanup. This
+step creates the swapchain once; resize/minimize recovery and swapchain recreation
+will be added with the rendering loop. Image-query or image-view creation failure
+destroys any views already created and the swapchain before device teardown.
+Swapchain images are owned by the swapchain and are not separately destroyed.
+
+This milestone does not acquire images, record command buffers, draw, or present.
 Only the two requested Vulkan 1.3 features are enabled; other queried features
 are not enabled wholesale. Indirect-draw/culling features will be checked and
 enabled when implementing those later milestones. Surface formats and
 present modes are counted here; their actual values and current surface capabilities
 must be queried again when constructing or recreating the swapchain.
-On Wayland the window may not appear until its first image is presented. Use
+On Wayland the window may not appear until its first image is presented. Creating
+a swapchain alone does not make it visible. Use
 Ctrl+C in the terminal to stop a non-visible interactive run. Later milestones
-will add the swapchain and a clear frame for the D1 skeleton.
+will add a clear frame and resize handling for the D1 skeleton.
 
 ## Build
 
@@ -99,7 +121,9 @@ Successful startup prints `Vulkan instance created (requested API 1.3).` and nor
 shutdown prints `Vulkan instance destroyed.` Between them it prints
 `Vulkan window surface created.`, the device/queue-family list and selection reasons,
 `Selected GPU:` and `Selected queue family:`, logical-device creation/queue
-acquisition messages, `Logical device destroyed; its queue is released with it.`, then
+acquisition messages, swapchain size/image count/format/color-space enums/FIFO
+mode and image-view count, then image-view/swapchain destruction,
+`Logical device destroyed; its queue is released with it.`, then
 `Vulkan window surface destroyed.` A positive presentation-support query is
 a capability report, not an actual image-presentation test.
 Enumeration errors or an empty list cause cleanup and a failure exit.
@@ -108,7 +132,7 @@ Physical-device handles belong to the instance and need no separate destruction.
 This is not a rendering or GPU performance test.
 
 On Linux with the Khronos validation layer installed, an instance/surface lifecycle
-and device/queue lifecycle check can also be run with:
+and device/swapchain/image-view lifecycle check can also be run with:
 
 ```sh
 XDG_SESSION_TYPE=x11 VK_INSTANCE_LAYERS=VK_LAYER_KHRONOS_validation ./build/gpu_culling --smoke-test
@@ -119,8 +143,8 @@ does not yet install a debug messenger of its own.
 
 ## Code and attribution
 
-- `src/main.cpp`: window, instance, surface, GPU selection, logical-device/queue
-  creation, event loop, and cleanup in one file.
+- `src/main.cpp`: window, instance, surface, GPU selection, logical-device/queue,
+  swapchain/image-view creation, event loop, and cleanup in one file.
 - `CMakeLists.txt`: build target, GLFW dependency, and Vulkan loader linkage.
 - GLFW: <https://github.com/glfw/glfw/tree/3.4>, zlib/libpng license.
 - API reference: <https://www.glfw.org/docs/latest/vulkan_guide.html>.
@@ -139,6 +163,10 @@ does not yet install a debug messenger of its own.
 - Logical-device creation: <https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateDevice.html>.
 - Queue creation information: <https://docs.vulkan.org/refpages/latest/refpages/source/VkDeviceQueueCreateInfo.html>.
 - Queue retrieval: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetDeviceQueue.html>.
+- Swapchain creation: <https://docs.vulkan.org/refpages/latest/refpages/source/VkSwapchainCreateInfoKHR.html>.
+- Swapchain images: <https://docs.vulkan.org/refpages/latest/refpages/source/vkGetSwapchainImagesKHR.html>.
+- Image views: <https://docs.vulkan.org/refpages/latest/refpages/source/VkImageViewCreateInfo.html>.
+- FIFO presentation: <https://docs.vulkan.org/refpages/latest/refpages/source/VkPresentModeKHR.html>.
 
 AI assistance was used to draft this initial code and documentation. No external
 renderer or research implementation is included at this stage. Verification
