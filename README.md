@@ -1,13 +1,14 @@
 # GPU Frustum Culling and Indirect Draw in Vulkan
 
 A C++20 / Vulkan project for GPU frustum culling and indirect drawing.
-The current version is a working Vulkan window skeleton; culling and scene geometry are not implemented yet.
+The current version is a working Vulkan window skeleton; geometry drawing and culling are not implemented yet.
 
 ## Current behavior
 
 - Inspects physical devices and queue families, then selects a GPU with graphics, compute, and presentation support in one queue family.
 - Creates a window surface, logical device, swapchain, and image views.
 - Clears the window dark blue using dynamic rendering and presents frames.
+- Prepares CPU-side floor geometry and camera settings for the next rendering step.
 - Handles resize and minimize/restore, and releases resources on exit. Press Escape or close the window to quit.
 
 ## Dependencies
@@ -16,6 +17,7 @@ The current version is a working Vulkan window skeleton; culling and scene geome
 - Vulkan 1.3+ headers and loader (development package or Vulkan SDK), plus a compatible GPU driver.
 - A non-CPU Vulkan device supporting dynamic rendering, synchronization2, and `VK_KHR_swapchain`.
 - GLFW 3.4: CMake uses installed 3.4.0 or fetches the upstream 3.4 tag. Fetching requires Git/network access; building GLFW also needs the platform's window-system development packages.
+- GLM 1.0.1+: CMake uses an installed package or fetches the upstream 1.0.1 tag, which requires Git/network access.
 - A graphical desktop session to run.
 
 ## Build
@@ -53,7 +55,7 @@ Append `--smoke-test` for a short rendering and shutdown check.
 
 | File | Responsibility |
 |---|---|
-| `src/main.cpp` | Window/instance/surface setup, event loop, resize coordination, and shutdown. |
+| `src/main.cpp` | Floor/camera data, window/instance/surface setup, event loop, resize coordination, and shutdown. |
 | `src/device.hpp / .cpp` | Device inspection, GPU selection, and logical-device/queue creation. |
 | `src/swapchain.hpp / .cpp` | Swapchain state, images, image views, and cleanup. |
 | `src/frame.hpp / .cpp` | Frame resources, command recording, synchronization, and presentation. |

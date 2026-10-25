@@ -17,6 +17,17 @@ if(NOT TARGET glfw)
     FetchContent_MakeAvailable(glfw)
 endif()
 
+find_package(glm 1.0.1 CONFIG QUIET)
+if(NOT TARGET glm::glm)
+    include(FetchContent)
+    FetchContent_Declare(glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 1.0.1
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(glm)
+endif()
+
 add_executable(gpu_culling
     src/main.cpp
     src/device.cpp
@@ -29,7 +40,7 @@ add_executable(gpu_culling
 )
 target_compile_features(gpu_culling PRIVATE cxx_std_20)
 set_target_properties(gpu_culling PROPERTIES CXX_EXTENSIONS OFF)
-target_link_libraries(gpu_culling PRIVATE glfw Vulkan::Vulkan)
+target_link_libraries(gpu_culling PRIVATE glfw Vulkan::Vulkan glm::glm)
 
 if(MSVC)
     target_compile_options(gpu_culling PRIVATE /W4 /permissive-)

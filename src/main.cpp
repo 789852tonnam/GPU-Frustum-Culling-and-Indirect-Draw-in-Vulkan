@@ -5,12 +5,34 @@
 #include "vulkan_utils.hpp"
 
 #include <GLFW/glfw3.h>
+#include <glm/vec3.hpp>
 
+#include <array>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <string_view>
 
 namespace {
+
+// World-space floor corners: X/Z span 20 metres; Y is height.
+const std::array<glm::vec3, 4> floorVertices{{
+    {-10.0f, 0.0f, -10.0f},
+    { 10.0f, 0.0f, -10.0f},
+    { 10.0f, 0.0f,  10.0f},
+    {-10.0f, 0.0f,  10.0f},
+}};
+// Each group of three indices selects one triangle from those corners.
+constexpr std::array<std::uint16_t, 6> floorIndices{0, 2, 1, 0, 3, 2};
+
+struct CameraState {
+    glm::vec3 position{0.0f, 2.0f, 0.0f};
+    float yawDegrees = 0.0f; // Zero yaw will face -Z.
+    float pitchDegrees = -20.0f;
+    float verticalFovDegrees = 60.0f;
+    float nearPlane = 0.1f;
+    float farPlane = 100.0f;
+};
 
 // Keep receiving window events while rendering is paused. A minimized window
 // may keep a nonzero framebuffer size on X11, so check ICONIFIED as well.
@@ -65,6 +87,7 @@ int main(int argc, char** argv) {
         std::cerr << "Usage: gpu_culling [--smoke-test]\n";
         return EXIT_FAILURE;
     }
+    const CameraState camera{};
 
     glfwSetErrorCallback([](int code, const char* description) {
         std::cerr << "GLFW error " << code << ": " << description << '\n';
@@ -95,6 +118,11 @@ int main(int argc, char** argv) {
     });
 
     std::cout << "GLFW window created (960x540). Press Escape or close the window to exit.\n";
+    std::cout << "Scene data prepared on CPU: floor 20 x 20 m, " << floorVertices.size()
+              << " vertices, " << floorIndices.size() << " indices.\n"
+              << "Camera position: (" << camera.position.x << ", " << camera.position.y
+              << ", " << camera.position.z << "), yaw " << camera.yawDegrees
+              << ", pitch " << camera.pitchDegrees << " degrees.\n";
 
     // GLFW chooses the surface extensions for the active window system.
     uint32_t extensionCount = 0;
