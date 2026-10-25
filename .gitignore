@@ -3,3 +3,8 @@
 /CMakeUserPresets.json
 /.vs/
 *.user
+
+# Local project and agent notes
+/AI.md
+/GLOSSARY.md
+/AGENTS.md
