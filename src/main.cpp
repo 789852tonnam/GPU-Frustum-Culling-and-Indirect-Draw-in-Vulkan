@@ -34,6 +34,24 @@ struct CameraState {
     float farPlane = 100.0f;
 };
 
+// Create the buffer object first; its backing memory is a separate step.
+bool createGeometryBuffer(VkDevice device, VkDeviceSize size,
+                          VkBufferUsageFlags usage, VkBuffer& buffer) {
+    VkBufferCreateInfo bufferInfo{};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size = size;
+    bufferInfo.usage = usage;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    VkBuffer createdBuffer = VK_NULL_HANDLE;
+    if (!checkVulkan(vkCreateBuffer(device, &bufferInfo, nullptr, &createdBuffer),
+                     "Create geometry buffer")) {
+        return false;
+    }
+    buffer = createdBuffer;
+    return true;
+}
+
 // Keep receiving window events while rendering is paused. A minimized window
 // may keep a nonzero framebuffer size on X11, so check ICONIFIED as well.
 bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0) {
@@ -210,8 +228,20 @@ int main(int argc, char** argv) {
         glfwTerminate();
         return EXIT_FAILURE;
     }
+    const VkDeviceSize vertexBytes = floorVertices.size() * sizeof(floorVertices[0]);
+    const VkDeviceSize indexBytes = floorIndices.size() * sizeof(floorIndices[0]);
+    VkBuffer vertexBuffer = VK_NULL_HANDLE;
+    VkBuffer indexBuffer = VK_NULL_HANDLE;
     FrameState frame{};
-    bool success = createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
+    bool success = createGeometryBuffer(device, vertexBytes, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                                        vertexBuffer) &&
+                   createGeometryBuffer(device, indexBytes, VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                        indexBuffer) &&
+                   createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
+    if (success) {
+        std::cout << "Geometry buffer objects created: vertex " << vertexBytes
+                  << " bytes, index " << indexBytes << " bytes; memory binding pending.\n";
+    }
     framebufferResized = false;
     uint64_t presentedFrames = 0;
     uint32_t swapchainRecreations = 0;
@@ -264,6 +294,9 @@ int main(int argc, char** argv) {
     std::cout << "Swapchain recreations: " << swapchainRecreations << '\n';
     destroyFrameState(device, frame);
     std::cout << "Frame resources destroyed.\n";
+    vkDestroyBuffer(device, indexBuffer, nullptr);
+    vkDestroyBuffer(device, vertexBuffer, nullptr);
+    std::cout << "Geometry buffer objects destroyed.\n";
     destroySwapchain(device, swapchain);
     std::cout << "Swapchain image views and swapchain destroyed.\n";
     vkDestroyDevice(device, nullptr);

@@ -8,7 +8,7 @@ The current version is a working Vulkan window skeleton; geometry drawing and cu
 - Inspects physical devices and queue families, then selects a GPU with graphics, compute, and presentation support in one queue family.
 - Creates a window surface, logical device, swapchain, and image views.
 - Clears the window dark blue using dynamic rendering and presents frames.
-- Prepares CPU-side floor geometry and camera settings for the next rendering step.
+- Prepares floor/camera data and creates vertex/index buffer objects; memory upload and geometry drawing are pending.
 - Handles resize and minimize/restore, and releases resources on exit. Press Escape or close the window to quit.
 
 ## Dependencies
