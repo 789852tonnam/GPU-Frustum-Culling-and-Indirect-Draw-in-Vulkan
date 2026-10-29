@@ -43,6 +43,9 @@ add_executable(gpu_culling
 target_compile_features(gpu_culling PRIVATE cxx_std_20)
 set_target_properties(gpu_culling PROPERTIES CXX_EXTENSIONS OFF)
 target_link_libraries(gpu_culling PRIVATE glfw Vulkan::Vulkan glm::glm)
+target_compile_definitions(gpu_culling PRIVATE
+    GPU_CULLING_SHADER_DIR="${CMAKE_CURRENT_BINARY_DIR}/shaders"
+)
 
 set(SHADER_BINARIES)
 foreach(SHADER floor.vert floor.frag)

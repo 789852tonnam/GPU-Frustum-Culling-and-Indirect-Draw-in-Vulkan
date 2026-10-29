@@ -14,8 +14,11 @@
 #include <cstdint>
 #include <cstring>
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string_view>
+#include <vector>
 
 namespace {
 
@@ -121,6 +124,40 @@ bool uploadGeometryData(VkDevice device, VkDeviceMemory memory,
     }
     std::memcpy(mapped, source, static_cast<std::size_t>(size));
     vkUnmapMemory(device, memory);
+    return true;
+}
+
+bool loadShaderModule(VkDevice device, const std::filesystem::path& path,
+                      VkShaderModule& shader) {
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    if (!file) {
+        std::cerr << "Unable to open shader file: " << path << '\n';
+        return false;
+    }
+    const std::streamoff size = file.tellg();
+    // SPIR-V has a five-word header and consists of 32-bit words.
+    if (size < 20 || size % 4 != 0) {
+        std::cerr << "Invalid SPIR-V file size: " << path << '\n';
+        return false;
+    }
+    std::vector<std::uint32_t> code(static_cast<std::size_t>(size) / sizeof(std::uint32_t));
+    file.seekg(0);
+    if (!file.read(reinterpret_cast<char*>(code.data()), size) || code[0] != 0x07230203u) {
+        std::cerr << "Unable to read SPIR-V shader or invalid header: " << path << '\n';
+        return false;
+    }
+
+    VkShaderModuleCreateInfo shaderInfo{};
+    shaderInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    shaderInfo.codeSize = static_cast<std::size_t>(size);
+    shaderInfo.pCode = code.data();
+    VkShaderModule createdShader = VK_NULL_HANDLE;
+    if (!checkVulkan(vkCreateShaderModule(device, &shaderInfo, nullptr, &createdShader),
+                     "Create shader module")) {
+        return false;
+    }
+    shader = createdShader;
+    std::cout << "Shader module created: " << path << '\n';
     return true;
 }
 
@@ -306,6 +343,9 @@ int main(int argc, char** argv) {
     VkBuffer indexBuffer = VK_NULL_HANDLE;
     VkDeviceMemory vertexMemory = VK_NULL_HANDLE;
     VkDeviceMemory indexMemory = VK_NULL_HANDLE;
+    const std::filesystem::path shaderDirectory{GPU_CULLING_SHADER_DIR};
+    VkShaderModule vertexShader = VK_NULL_HANDLE;
+    VkShaderModule fragmentShader = VK_NULL_HANDLE;
     FrameState frame{};
     bool success = createGeometryBuffer(device, vertexBytes, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                                         vertexBuffer) &&
@@ -315,6 +355,8 @@ int main(int argc, char** argv) {
                    allocateGeometryMemory(selection.device, device, indexBuffer, indexMemory) &&
                    uploadGeometryData(device, vertexMemory, floorVertices.data(), vertexBytes) &&
                    uploadGeometryData(device, indexMemory, floorIndices.data(), indexBytes) &&
+                   loadShaderModule(device, shaderDirectory / "floor.vert.spv", vertexShader) &&
+                   loadShaderModule(device, shaderDirectory / "floor.frag.spv", fragmentShader) &&
                    createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
     if (success) {
         std::cout << "Geometry buffers ready: vertex " << vertexBytes
@@ -375,6 +417,9 @@ int main(int argc, char** argv) {
     std::cout << "Swapchain recreations: " << swapchainRecreations << '\n';
     destroyFrameState(device, frame);
     std::cout << "Frame resources destroyed.\n";
+    vkDestroyShaderModule(device, fragmentShader, nullptr);
+    vkDestroyShaderModule(device, vertexShader, nullptr);
+    std::cout << "Shader modules destroyed.\n";
     vkDestroyBuffer(device, indexBuffer, nullptr);
     vkDestroyBuffer(device, vertexBuffer, nullptr);
     vkFreeMemory(device, indexMemory, nullptr);
