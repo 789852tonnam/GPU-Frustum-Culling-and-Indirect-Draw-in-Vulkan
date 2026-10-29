@@ -9,6 +9,7 @@
 
 #include <array>
 #include <cstdint>
+#include <cstring>
 #include <cstdlib>
 #include <iostream>
 #include <string_view>
@@ -88,6 +89,18 @@ bool allocateGeometryMemory(VkPhysicalDevice physicalDevice, VkDevice device,
     }
     std::cerr << "No compatible host-visible coherent memory type for geometry buffer.\n";
     return false;
+}
+
+// These allocations are host-coherent; upload once before submitting any GPU work.
+bool uploadGeometryData(VkDevice device, VkDeviceMemory memory,
+                        const void* source, VkDeviceSize size) {
+    void* mapped = nullptr;
+    if (!checkVulkan(vkMapMemory(device, memory, 0, size, 0, &mapped), "Map geometry memory")) {
+        return false;
+    }
+    std::memcpy(mapped, source, static_cast<std::size_t>(size));
+    vkUnmapMemory(device, memory);
+    return true;
 }
 
 // Keep receiving window events while rendering is paused. A minimized window
@@ -279,10 +292,12 @@ int main(int argc, char** argv) {
                                         indexBuffer) &&
                    allocateGeometryMemory(selection.device, device, vertexBuffer, vertexMemory) &&
                    allocateGeometryMemory(selection.device, device, indexBuffer, indexMemory) &&
+                   uploadGeometryData(device, vertexMemory, floorVertices.data(), vertexBytes) &&
+                   uploadGeometryData(device, indexMemory, floorIndices.data(), indexBytes) &&
                    createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
     if (success) {
         std::cout << "Geometry buffers ready: vertex " << vertexBytes
-                  << " bytes, index " << indexBytes << " bytes; memory bound, upload pending.\n";
+                  << " bytes, index " << indexBytes << " bytes; data uploaded, drawing pending.\n";
     }
     framebufferResized = false;
     uint64_t presentedFrames = 0;
