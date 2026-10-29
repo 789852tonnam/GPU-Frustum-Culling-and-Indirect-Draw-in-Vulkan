@@ -9,6 +9,7 @@ The current version is a working Vulkan window skeleton; geometry drawing and cu
 - Creates a window surface, logical device, swapchain, and image views.
 - Clears the window dark blue using dynamic rendering and presents frames.
 - Uploads floor vertices and indices into host-visible buffer memory; geometry drawing is pending.
+- Computes the fixed camera's view-projection matrix on the CPU using the swapchain extent; delivery to shaders is pending.
 - Handles resize and minimize/restore, and releases resources on exit. Press Escape or close the window to quit.
 
 ## Dependencies

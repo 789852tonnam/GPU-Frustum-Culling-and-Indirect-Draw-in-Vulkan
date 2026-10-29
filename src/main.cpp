@@ -5,6 +5,9 @@
 #include "vulkan_utils.hpp"
 
 #include <GLFW/glfw3.h>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/trigonometric.hpp>
 #include <glm/vec3.hpp>
 
 #include <array>
@@ -34,6 +37,24 @@ struct CameraState {
     float nearPlane = 0.1f;
     float farPlane = 100.0f;
 };
+
+glm::mat4 createCameraViewProjection(const CameraState& camera, VkExtent2D extent) {
+    const float yaw = glm::radians(camera.yawDegrees);
+    const float pitch = glm::radians(camera.pitchDegrees);
+    const glm::vec3 forward{
+        glm::sin(yaw) * glm::cos(pitch),
+        glm::sin(pitch),
+        -glm::cos(yaw) * glm::cos(pitch),
+    };
+    const glm::mat4 view = glm::lookAtRH(camera.position, camera.position + forward,
+                                        glm::vec3{0.0f, 1.0f, 0.0f});
+    const float aspect = static_cast<float>(extent.width) / static_cast<float>(extent.height);
+    glm::mat4 projection = glm::perspectiveRH_ZO(glm::radians(camera.verticalFovDegrees),
+                                               aspect, camera.nearPlane, camera.farPlane);
+    // Vulkan's positive-height viewport maps increasing Y down the image.
+    projection[1][1] *= -1.0f;
+    return projection * view;
+}
 
 // Create the buffer object first; its backing memory is a separate step.
 bool createGeometryBuffer(VkDevice device, VkDeviceSize size,
@@ -325,6 +346,9 @@ int main(int argc, char** argv) {
             }
             continue;
         }
+        // CPU preparation only for now; a later step will send this through push constants.
+        [[maybe_unused]] const glm::mat4 viewProjection =
+            createCameraViewProjection(camera, swapchain.extent);
         const FrameResult frameResult = drawFrame(device, queue, swapchain, frame);
         if (frameResult == FrameResult::OutOfDate) {
             std::cout << "Swapchain is out of date; requesting recreation.\n";
