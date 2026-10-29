@@ -52,6 +52,44 @@ bool createGeometryBuffer(VkDevice device, VkDeviceSize size,
     return true;
 }
 
+bool allocateGeometryMemory(VkPhysicalDevice physicalDevice, VkDevice device,
+                            VkBuffer buffer, VkDeviceMemory& memory) {
+    VkMemoryRequirements requirements{};
+    vkGetBufferMemoryRequirements(device, buffer, &requirements);
+    VkPhysicalDeviceMemoryProperties properties{};
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &properties);
+    const VkMemoryPropertyFlags required = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+    for (uint32_t index = 0; index < properties.memoryTypeCount; ++index) {
+        const bool compatible = (requirements.memoryTypeBits & (1u << index)) != 0;
+        const bool hostWritable = (properties.memoryTypes[index].propertyFlags & required) == required;
+        if (!compatible || !hostWritable) {
+            continue;
+        }
+
+        VkMemoryAllocateInfo allocateInfo{};
+        allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocateInfo.allocationSize = requirements.size;
+        allocateInfo.memoryTypeIndex = index;
+        VkDeviceMemory allocatedMemory = VK_NULL_HANDLE;
+        if (!checkVulkan(vkAllocateMemory(device, &allocateInfo, nullptr, &allocatedMemory),
+                         "Allocate geometry memory")) {
+            return false;
+        }
+        // The caller owns this allocation even if binding fails, so cleanup can free it.
+        memory = allocatedMemory;
+        if (!checkVulkan(vkBindBufferMemory(device, buffer, memory, 0), "Bind geometry memory")) {
+            return false;
+        }
+        std::cout << "Geometry memory bound: " << requirements.size
+                  << " bytes, memory type " << index << ".\n";
+        return true;
+    }
+    std::cerr << "No compatible host-visible coherent memory type for geometry buffer.\n";
+    return false;
+}
+
 // Keep receiving window events while rendering is paused. A minimized window
 // may keep a nonzero framebuffer size on X11, so check ICONIFIED as well.
 bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0) {
@@ -232,15 +270,19 @@ int main(int argc, char** argv) {
     const VkDeviceSize indexBytes = floorIndices.size() * sizeof(floorIndices[0]);
     VkBuffer vertexBuffer = VK_NULL_HANDLE;
     VkBuffer indexBuffer = VK_NULL_HANDLE;
+    VkDeviceMemory vertexMemory = VK_NULL_HANDLE;
+    VkDeviceMemory indexMemory = VK_NULL_HANDLE;
     FrameState frame{};
     bool success = createGeometryBuffer(device, vertexBytes, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                                         vertexBuffer) &&
                    createGeometryBuffer(device, indexBytes, VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                                         indexBuffer) &&
+                   allocateGeometryMemory(selection.device, device, vertexBuffer, vertexMemory) &&
+                   allocateGeometryMemory(selection.device, device, indexBuffer, indexMemory) &&
                    createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
     if (success) {
-        std::cout << "Geometry buffer objects created: vertex " << vertexBytes
-                  << " bytes, index " << indexBytes << " bytes; memory binding pending.\n";
+        std::cout << "Geometry buffers ready: vertex " << vertexBytes
+                  << " bytes, index " << indexBytes << " bytes; memory bound, upload pending.\n";
     }
     framebufferResized = false;
     uint64_t presentedFrames = 0;
@@ -296,7 +338,9 @@ int main(int argc, char** argv) {
     std::cout << "Frame resources destroyed.\n";
     vkDestroyBuffer(device, indexBuffer, nullptr);
     vkDestroyBuffer(device, vertexBuffer, nullptr);
-    std::cout << "Geometry buffer objects destroyed.\n";
+    vkFreeMemory(device, indexMemory, nullptr);
+    vkFreeMemory(device, vertexMemory, nullptr);
+    std::cout << "Geometry buffers destroyed; memory freed.\n";
     destroySwapchain(device, swapchain);
     std::cout << "Swapchain image views and swapchain destroyed.\n";
     vkDestroyDevice(device, nullptr);
