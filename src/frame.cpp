@@ -69,7 +69,9 @@ bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
 }
 
 FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swapchain,
-                      FrameState& frame) {
+                      FrameState& frame, VkPipeline pipeline, VkPipelineLayout layout,
+                      VkBuffer vertexBuffer, VkBuffer indexBuffer, uint32_t indexCount,
+                      const glm::mat4& viewProjection) {
     if (!checkVulkan(vkWaitForFences(device, 1, &frame.inFlight, VK_TRUE, UINT64_MAX),
                      "Wait for previous frame")) {
         return FrameResult::Failed;
@@ -136,6 +138,25 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     renderingInfo.colorAttachmentCount = 1;
     renderingInfo.pColorAttachments = &colorAttachment;
     vkCmdBeginRendering(frame.commandBuffer, &renderingInfo);
+
+    vkCmdBindPipeline(frame.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    // Positive viewport height pairs with the Y flip in the camera projection.
+    VkViewport viewport{};
+    viewport.width = static_cast<float>(swapchain.extent.width);
+    viewport.height = static_cast<float>(swapchain.extent.height);
+    viewport.maxDepth = 1.0f;
+    vkCmdSetViewport(frame.commandBuffer, 0, 1, &viewport);
+    VkRect2D scissor{};
+    scissor.extent = swapchain.extent;
+    vkCmdSetScissor(frame.commandBuffer, 0, 1, &scissor);
+
+    const VkDeviceSize vertexOffset = 0;
+    vkCmdBindVertexBuffers(frame.commandBuffer, 0, 1, &vertexBuffer, &vertexOffset);
+    vkCmdBindIndexBuffer(frame.commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdPushConstants(frame.commandBuffer, layout, VK_SHADER_STAGE_VERTEX_BIT,
+                       0, sizeof(viewProjection), &viewProjection);
+    vkCmdDrawIndexed(frame.commandBuffer, indexCount, 1, 0, 0, 0);
+
     vkCmdEndRendering(frame.commandBuffer);
 
     VkImageMemoryBarrier2 toPresent = toColor;
@@ -173,7 +194,7 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
 
     // Reset only when a submission is ready; an early acquire return keeps it signaled.
     if (!checkVulkan(vkResetFences(device, 1, &frame.inFlight), "Reset frame fence") ||
-        !checkVulkan(vkQueueSubmit2(queue, 1, &submitInfo, frame.inFlight), "Submit clear frame")) {
+        !checkVulkan(vkQueueSubmit2(queue, 1, &submitInfo, frame.inFlight), "Submit scene frame")) {
         return FrameResult::Failed;
     }
 
@@ -188,7 +209,7 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
         return FrameResult::OutOfDate;
     }
-    if (result != VK_SUBOPTIMAL_KHR && !checkVulkan(result, "Present clear frame")) {
+    if (result != VK_SUBOPTIMAL_KHR && !checkVulkan(result, "Present scene frame")) {
         return FrameResult::Failed;
     }
     return FrameResult::Presented;

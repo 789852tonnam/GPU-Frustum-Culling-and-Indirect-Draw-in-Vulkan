@@ -1,16 +1,16 @@
 # GPU Frustum Culling and Indirect Draw in Vulkan
 
 A C++20 / Vulkan project for GPU frustum culling and indirect drawing.
-The current version is a working Vulkan window skeleton; geometry drawing and culling are not implemented yet.
+The current version renders a checkerboard floor with a rotating camera; culling and indirect drawing are not implemented yet.
 
 ## Current behavior
 
 - Inspects physical devices and queue families, then selects a GPU with graphics, compute, and presentation support in one queue family.
 - Creates a window surface, logical device, swapchain, and image views.
-- Clears the window dark blue using dynamic rendering and presents frames.
-- Uploads floor vertices and indices into host-visible buffer memory; geometry drawing is pending.
-- Computes the fixed camera's view-projection matrix on the CPU using the swapchain extent; delivery to shaders is pending.
-- Builds and loads floor shader modules and creates a graphics pipeline with vertex input and a camera push-constant range; binding and draw commands are pending.
+- Draws a 20 × 20 metre floor with 1-metre gray checker cells over a dark-blue background using dynamic rendering and an indexed graphics pipeline.
+- Uploads floor vertices and indices into host-visible buffer memory and sends the camera's view-projection matrix to the vertex shader through push constants.
+- Rotates the camera in place once every ten seconds of active preview time, keeping its position at (0, 2, 0) and downward pitch at 20 degrees.
+- Updates perspective for the current drawable size; minimize/zero-size pauses rendering and rotation, and restore resumes the same rotation phase.
 - Handles resize and minimize/restore, and releases resources on exit. Press Escape or close the window to quit.
 
 ## Dependencies

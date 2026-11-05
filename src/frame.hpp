@@ -2,6 +2,8 @@
 
 #include "swapchain.hpp"
 
+#include <glm/mat4x4.hpp>
+
 #include <cstddef>
 #include <vector>
 
@@ -20,4 +22,6 @@ void destroyFrameState(VkDevice device, FrameState& frame);
 bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
                       std::size_t imageCount, FrameState& frame);
 FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swapchain,
-                      FrameState& frame);
+                      FrameState& frame, VkPipeline pipeline, VkPipelineLayout layout,
+                      VkBuffer vertexBuffer, VkBuffer indexBuffer, uint32_t indexCount,
+                      const glm::mat4& viewProjection);

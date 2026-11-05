@@ -11,6 +11,7 @@
 #include <glm/vec3.hpp>
 
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <cstdlib>
@@ -289,8 +290,13 @@ bool createGraphicsPipeline(VkDevice device, VkFormat colorFormat,
 
 // Keep receiving window events while rendering is paused. A minimized window
 // may keep a nonzero framebuffer size on X11, so check ICONIFIED as well.
-bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0) {
+bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0,
+                           double* pausedSeconds = nullptr) {
     bool paused = false;
+    double pauseStarted = 0.0;
+    if (pausedSeconds) {
+        *pausedSeconds = 0.0;
+    }
     while (!glfwWindowShouldClose(window)) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS ||
             (closeAt > 0.0 && glfwGetTime() >= closeAt)) {
@@ -302,11 +308,15 @@ bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0) {
         glfwGetFramebufferSize(window, &width, &height);
         if (width > 0 && height > 0 && !glfwGetWindowAttrib(window, GLFW_ICONIFIED)) {
             if (paused) {
+                if (pausedSeconds) {
+                    *pausedSeconds = glfwGetTime() - pauseStarted;
+                }
                 std::cout << "Window drawable again; resuming.\n";
             }
             return true;
         }
         if (!paused) {
+            pauseStarted = glfwGetTime();
             std::cout << "Rendering paused: window minimized or framebuffer has zero size.\n";
             paused = true;
         }
@@ -348,7 +358,8 @@ int main(int argc, char** argv) {
         std::cerr << "Usage: gpu_culling [--smoke-test]\n";
         return EXIT_FAILURE;
     }
-    const CameraState camera{};
+    CameraState camera{};
+    constexpr double cameraRotationPeriod = 10.0;
 
     glfwSetErrorCallback([](int code, const char* description) {
         std::cerr << "GLFW error " << code << ": " << description << '\n';
@@ -360,7 +371,7 @@ int main(int argc, char** argv) {
 
     // Vulkan handles rendering; no OpenGL context is needed.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - S2.9 Resize", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(960, 540, "GPU Culling - Checkerboard Preview", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return EXIT_FAILURE;
@@ -497,12 +508,14 @@ int main(int argc, char** argv) {
                    createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
     if (success) {
         std::cout << "Geometry buffers ready: vertex " << vertexBytes
-                  << " bytes, index " << indexBytes << " bytes; data uploaded, drawing pending.\n";
+                  << " bytes, index " << indexBytes << " bytes; ready to draw.\n";
     }
     framebufferResized = false;
     uint64_t presentedFrames = 0;
     uint32_t swapchainRecreations = 0;
     const double startTime = glfwGetTime();
+    double previousFrameTime = startTime;
+    double activePreviewSeconds = 0.0;
 
     while (success && !glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -513,9 +526,16 @@ int main(int argc, char** argv) {
         if (glfwWindowShouldClose(window)) {
             break;
         }
-        if (!waitForDrawableWindow(window, smokeTest ? startTime + 0.5 : 0.0)) {
+        double pausedSeconds = 0.0;
+        if (!waitForDrawableWindow(window, smokeTest ? startTime + 0.5 : 0.0, &pausedSeconds)) {
             break;
         }
+        // Subtract only the actual pause, not the normal window-check overhead.
+        const double currentTime = glfwGetTime();
+        activePreviewSeconds += currentTime - previousFrameTime - pausedSeconds;
+        previousFrameTime = currentTime;
+        camera.yawDegrees = static_cast<float>(
+            std::fmod(activePreviewSeconds, cameraRotationPeriod) * 360.0 / cameraRotationPeriod);
         if (framebufferResized) {
             success = recreateSwapchain(selection, device, surface, window, swapchain, frame,
                                          vertexShader, fragmentShader, graphicsPipeline);
@@ -526,10 +546,11 @@ int main(int argc, char** argv) {
             }
             continue;
         }
-        // CPU preparation only for now; a later step will send this through push constants.
-        [[maybe_unused]] const glm::mat4 viewProjection =
+        const glm::mat4 viewProjection =
             createCameraViewProjection(camera, swapchain.extent);
-        const FrameResult frameResult = drawFrame(device, queue, swapchain, frame);
+        const FrameResult frameResult = drawFrame(
+            device, queue, swapchain, frame, graphicsPipeline.handle, graphicsPipeline.layout,
+            vertexBuffer, indexBuffer, static_cast<uint32_t>(floorIndices.size()), viewProjection);
         if (frameResult == FrameResult::OutOfDate) {
             std::cout << "Swapchain is out of date; requesting recreation.\n";
             framebufferResized = true;
@@ -538,7 +559,7 @@ int main(int argc, char** argv) {
         } else if (frameResult == FrameResult::Presented) {
             ++presentedFrames;
             if (presentedFrames == 1) {
-                std::cout << "First clear frame submitted for presentation (dark blue).\n";
+                std::cout << "First checkerboard frame submitted for presentation.\n";
             }
         }
     }
