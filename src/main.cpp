@@ -41,6 +41,12 @@ struct CameraState {
     float farPlane = 100.0f;
 };
 
+struct GraphicsPipelineState {
+    VkPipelineLayout layout = VK_NULL_HANDLE;
+    VkPipeline handle = VK_NULL_HANDLE;
+    VkFormat colorFormat = VK_FORMAT_UNDEFINED;
+};
+
 glm::mat4 createCameraViewProjection(const CameraState& camera, VkExtent2D extent) {
     const float yaw = glm::radians(camera.yawDegrees);
     const float pitch = glm::radians(camera.pitchDegrees);
@@ -161,6 +167,126 @@ bool loadShaderModule(VkDevice device, const std::filesystem::path& path,
     return true;
 }
 
+void destroyGraphicsPipeline(VkDevice device, GraphicsPipelineState& pipeline) {
+    vkDestroyPipeline(device, pipeline.handle, nullptr);
+    vkDestroyPipelineLayout(device, pipeline.layout, nullptr);
+    pipeline = {};
+}
+
+bool createGraphicsPipeline(VkDevice device, VkFormat colorFormat,
+                         VkShaderModule vertexShader, VkShaderModule fragmentShader,
+                         GraphicsPipelineState& pipeline) {
+    // The vertex shader receives one camera matrix through push constants.
+    VkPushConstantRange cameraRange{};
+    cameraRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    cameraRange.size = sizeof(glm::mat4);
+    VkPipelineLayoutCreateInfo layoutInfo{};
+    layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    layoutInfo.pushConstantRangeCount = 1;
+    layoutInfo.pPushConstantRanges = &cameraRange;
+    VkPipelineLayout createdLayout = VK_NULL_HANDLE;
+    if (!checkVulkan(vkCreatePipelineLayout(device, &layoutInfo, nullptr, &createdLayout),
+                     "Create graphics pipeline layout")) {
+        return false;
+    }
+    pipeline.layout = createdLayout; // Caller cleanup owns it even if pipeline creation fails.
+
+    VkPipelineShaderStageCreateInfo stages[2]{};
+    stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+    stages[0].module = vertexShader;
+    stages[0].pName = "main";
+    stages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    stages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    stages[1].module = fragmentShader;
+    stages[1].pName = "main";
+
+    // Binding 0 supplies the vec3 position declared at shader location 0.
+    VkVertexInputBindingDescription binding{};
+    binding.binding = 0;
+    binding.stride = sizeof(glm::vec3);
+    binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    VkVertexInputAttributeDescription position{};
+    position.location = 0;
+    position.binding = 0;
+    position.format = VK_FORMAT_R32G32B32_SFLOAT;
+    position.offset = 0;
+    VkPipelineVertexInputStateCreateInfo vertexInput{};
+    vertexInput.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInput.vertexBindingDescriptionCount = 1;
+    vertexInput.pVertexBindingDescriptions = &binding;
+    vertexInput.vertexAttributeDescriptionCount = 1;
+    vertexInput.pVertexAttributeDescriptions = &position;
+
+    VkPipelineInputAssemblyStateCreateInfo assembly{};
+    assembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    assembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    VkPipelineViewportStateCreateInfo viewport{};
+    viewport.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewport.viewportCount = 1;
+    viewport.scissorCount = 1;
+
+    VkPipelineRasterizationStateCreateInfo rasterization{};
+    rasterization.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterization.rasterizerDiscardEnable = VK_FALSE;
+    rasterization.polygonMode = VK_POLYGON_MODE_FILL;
+    rasterization.cullMode = VK_CULL_MODE_NONE;
+    rasterization.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    rasterization.lineWidth = 1.0f;
+    VkPipelineMultisampleStateCreateInfo multisample{};
+    multisample.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multisample.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    VkPipelineDepthStencilStateCreateInfo depthStencil{};
+    depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthStencil.depthTestEnable = VK_FALSE;
+    depthStencil.depthWriteEnable = VK_FALSE;
+
+    VkPipelineColorBlendAttachmentState colorAttachment{};
+    colorAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+                                     VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    VkPipelineColorBlendStateCreateInfo colorBlend{};
+    colorBlend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    colorBlend.attachmentCount = 1;
+    colorBlend.pAttachments = &colorAttachment;
+    const VkDynamicState dynamicStates[]{VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
+    VkPipelineDynamicStateCreateInfo dynamic{};
+    dynamic.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamic.dynamicStateCount = 2;
+    dynamic.pDynamicStates = dynamicStates;
+
+    // Dynamic rendering supplies attachment formats instead of a VkRenderPass.
+    VkPipelineRenderingCreateInfo rendering{};
+    rendering.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+    rendering.colorAttachmentCount = 1;
+    rendering.pColorAttachmentFormats = &colorFormat;
+    VkGraphicsPipelineCreateInfo pipelineInfo{};
+    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineInfo.pNext = &rendering;
+    pipelineInfo.stageCount = 2;
+    pipelineInfo.pStages = stages;
+    pipelineInfo.pVertexInputState = &vertexInput;
+    pipelineInfo.pInputAssemblyState = &assembly;
+    pipelineInfo.pViewportState = &viewport;
+    pipelineInfo.pRasterizationState = &rasterization;
+    pipelineInfo.pMultisampleState = &multisample;
+    pipelineInfo.pDepthStencilState = &depthStencil;
+    pipelineInfo.pColorBlendState = &colorBlend;
+    pipelineInfo.pDynamicState = &dynamic;
+    pipelineInfo.layout = pipeline.layout;
+    pipelineInfo.basePipelineIndex = -1;
+    VkPipeline createdPipeline = VK_NULL_HANDLE;
+    if (!checkVulkan(vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo,
+                                              nullptr, &createdPipeline), "Create graphics pipeline")) {
+        // Pipeline creation can return valid handles even when the overall call fails.
+        vkDestroyPipeline(device, createdPipeline, nullptr);
+        return false;
+    }
+    pipeline.handle = createdPipeline;
+    pipeline.colorFormat = colorFormat;
+    std::cout << "Graphics pipeline created for format " << colorFormat << ".\n";
+    return true;
+}
+
 // Keep receiving window events while rendering is paused. A minimized window
 // may keep a nonzero framebuffer size on X11, so check ICONIFIED as well.
 bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0) {
@@ -191,7 +317,9 @@ bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0) {
 
 bool recreateSwapchain(const DeviceSelection& selection, VkDevice device,
                        VkSurfaceKHR surface, GLFWwindow* window,
-                       SwapchainState& swapchain, FrameState& frame) {
+                       SwapchainState& swapchain, FrameState& frame,
+                       VkShaderModule vertexShader, VkShaderModule fragmentShader,
+                       GraphicsPipelineState& pipeline) {
     // Resize is infrequent: finish old work, then rebuild dependent objects.
     // Rebuilding FrameState also updates its per-image semaphore count and
     // starts with fresh synchronization objects after an out-of-date result.
@@ -202,6 +330,12 @@ bool recreateSwapchain(const DeviceSelection& selection, VkDevice device,
     destroySwapchain(device, swapchain);
     if (!createSwapchain(selection.device, device, surface, window, swapchain)) {
         return false;
+    }
+    if (pipeline.colorFormat != swapchain.format) {
+        destroyGraphicsPipeline(device, pipeline);
+        if (!createGraphicsPipeline(device, swapchain.format, vertexShader, fragmentShader, pipeline)) {
+            return false;
+        }
     }
     return createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
 }
@@ -346,6 +480,7 @@ int main(int argc, char** argv) {
     const std::filesystem::path shaderDirectory{GPU_CULLING_SHADER_DIR};
     VkShaderModule vertexShader = VK_NULL_HANDLE;
     VkShaderModule fragmentShader = VK_NULL_HANDLE;
+    GraphicsPipelineState graphicsPipeline{};
     FrameState frame{};
     bool success = createGeometryBuffer(device, vertexBytes, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                                         vertexBuffer) &&
@@ -357,6 +492,8 @@ int main(int argc, char** argv) {
                    uploadGeometryData(device, indexMemory, floorIndices.data(), indexBytes) &&
                    loadShaderModule(device, shaderDirectory / "floor.vert.spv", vertexShader) &&
                    loadShaderModule(device, shaderDirectory / "floor.frag.spv", fragmentShader) &&
+                   createGraphicsPipeline(device, swapchain.format, vertexShader, fragmentShader,
+                                       graphicsPipeline) &&
                    createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
     if (success) {
         std::cout << "Geometry buffers ready: vertex " << vertexBytes
@@ -380,7 +517,8 @@ int main(int argc, char** argv) {
             break;
         }
         if (framebufferResized) {
-            success = recreateSwapchain(selection, device, surface, window, swapchain, frame);
+            success = recreateSwapchain(selection, device, surface, window, swapchain, frame,
+                                         vertexShader, fragmentShader, graphicsPipeline);
             if (success) {
                 framebufferResized = false;
                 ++swapchainRecreations;
@@ -417,6 +555,8 @@ int main(int argc, char** argv) {
     std::cout << "Swapchain recreations: " << swapchainRecreations << '\n';
     destroyFrameState(device, frame);
     std::cout << "Frame resources destroyed.\n";
+    destroyGraphicsPipeline(device, graphicsPipeline);
+    std::cout << "Graphics pipeline and layout destroyed.\n";
     vkDestroyShaderModule(device, fragmentShader, nullptr);
     vkDestroyShaderModule(device, vertexShader, nullptr);
     std::cout << "Shader modules destroyed.\n";

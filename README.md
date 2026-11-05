@@ -10,7 +10,7 @@ The current version is a working Vulkan window skeleton; geometry drawing and cu
 - Clears the window dark blue using dynamic rendering and presents frames.
 - Uploads floor vertices and indices into host-visible buffer memory; geometry drawing is pending.
 - Computes the fixed camera's view-projection matrix on the CPU using the swapchain extent; delivery to shaders is pending.
-- Builds and loads vertex/fragment shader modules for the checkerboard floor; pipeline integration is pending.
+- Builds and loads floor shader modules and creates a graphics pipeline with vertex input and a camera push-constant range; binding and draw commands are pending.
 - Handles resize and minimize/restore, and releases resources on exit. Press Escape or close the window to quit.
 
 ## Dependencies
@@ -61,7 +61,7 @@ Append `--smoke-test` for a short rendering and shutdown check.
 
 | File | Responsibility |
 |---|---|
-| `src/main.cpp` | Floor/camera resources, shader loading, window/instance/surface setup, event loop, resize coordination, and shutdown. |
+| `src/main.cpp` | Floor/camera resources, shader loading, graphics pipeline setup, window/instance/surface setup, event loop, resize coordination, and shutdown. |
 | `src/device.hpp / .cpp` | Device inspection, GPU selection, and logical-device/queue creation. |
 | `src/swapchain.hpp / .cpp` | Swapchain state, images, image views, and cleanup. |
 | `src/frame.hpp / .cpp` | Frame resources, command recording, synchronization, and presentation. |
