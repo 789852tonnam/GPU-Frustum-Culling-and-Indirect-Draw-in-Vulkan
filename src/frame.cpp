@@ -3,6 +3,11 @@
 
 #include <iostream>
 
+/*
+ * Frame cleanup: release synchronization objects and the command pool after GPU work has finished.
+ * Destroying the pool also releases the command buffer allocated from it.
+ * Reset the state so this path handles both complete resources and partial creation failures.
+ */
 void destroyFrameState(VkDevice device, FrameState& frame) {
     // The caller waits for submitted GPU work before releasing these objects.
     for (const VkSemaphore semaphore : frame.renderFinished) {
@@ -21,6 +26,11 @@ void destroyFrameState(VkDevice device, FrameState& frame) {
     frame = {};
 }
 
+/*
+ * Frame setup: allocate reusable command recording and synchronization resources.
+ * A fence protects CPU reuse of the one frame in flight; semaphores coordinate image acquisition and presentation.
+ * Presentation may outlive that fence, so each swapchain image gets its own render-finished semaphore.
+ */
 bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
                       std::size_t imageCount, FrameState& frame) {
     VkCommandPoolCreateInfo poolInfo{};
@@ -70,8 +80,14 @@ bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
 
 FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swapchain,
                       FrameState& frame, VkPipeline pipeline, VkPipelineLayout layout,
-                      VkBuffer vertexBuffer, VkBuffer indexBuffer, uint32_t indexCount,
+                      VkPipeline spherePipeline, const MeshDraw& floor, const MeshDraw& spheres,
+                      const DepthState& depth,
                       const glm::mat4& viewProjection) {
+    /*
+     * Reuse the frame safely and acquire a destination image.
+     * Wait until the previous submission has finished before resetting or recording commands again.
+     * Acquisition can request a retry or swapchain rebuild; return before submitting in those cases.
+     */
     if (!checkVulkan(vkWaitForFences(device, 1, &frame.inFlight, VK_TRUE, UINT64_MAX),
                      "Wait for previous frame")) {
         return FrameResult::Failed;
@@ -91,6 +107,11 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
         return FrameResult::Failed;
     }
 
+    /*
+     * Begin recording commands for this frame.
+     * Reset the pool only after its previous GPU use has completed, then start a fresh command buffer.
+     * The calls below record work; actual GPU execution begins after queue submission later in this function.
+     */
     // The fence has completed, so the whole pool can be reset and reused safely.
     if (!checkVulkan(vkResetCommandPool(device, frame.commandPool, 0), "Reset command pool")) {
         return FrameResult::Failed;
@@ -102,6 +123,11 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
         return FrameResult::Failed;
     }
 
+    /*
+     * Prepare colour and depth images for attachment access.
+     * Discard their old contents because rendering clears them, while barriers order the relevant accesses.
+     * The colour image comes from the swapchain; the depth image is reused by this single-frame renderer.
+     */
     VkImageMemoryBarrier2 toColor{};
     toColor.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
     toColor.srcStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -117,12 +143,35 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     toColor.subresourceRange.levelCount = 1;
     toColor.subresourceRange.layerCount = 1;
 
+    VkImageMemoryBarrier2 toDepth{};
+    toDepth.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
+    toDepth.srcStageMask = VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT |
+                           VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT;
+    toDepth.srcAccessMask = VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+    toDepth.dstStageMask = toDepth.srcStageMask;
+    toDepth.dstAccessMask = VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
+                            VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+    // One frame is in flight; discard the previous depth contents and clear again.
+    toDepth.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    toDepth.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    toDepth.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    toDepth.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    toDepth.image = depth.image;
+    toDepth.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+    toDepth.subresourceRange.levelCount = 1;
+    toDepth.subresourceRange.layerCount = 1;
+    const VkImageMemoryBarrier2 attachments[]{toColor, toDepth};
     VkDependencyInfo dependency{};
     dependency.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO;
-    dependency.imageMemoryBarrierCount = 1;
-    dependency.pImageMemoryBarriers = &toColor;
+    dependency.imageMemoryBarrierCount = 2;
+    dependency.pImageMemoryBarriers = attachments;
     vkCmdPipelineBarrier2(frame.commandBuffer, &dependency);
 
+    /*
+     * Rendering scope: choose the attachments, clear values and image area.
+     * Beginning dynamic rendering clears the colour background and resets depth to its far value.
+     * Draw commands inside this scope write into these same attachments.
+     */
     VkRenderingAttachmentInfo colorAttachment{};
     colorAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
     colorAttachment.imageView = swapchain.views[imageIndex];
@@ -131,14 +180,28 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     colorAttachment.clearValue.color = {{0.02f, 0.06f, 0.15f, 1.0f}};
 
+    VkRenderingAttachmentInfo depthAttachment{};
+    depthAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+    depthAttachment.imageView = depth.view;
+    depthAttachment.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    depthAttachment.clearValue.depthStencil = {1.0f, 0};
+
     VkRenderingInfo renderingInfo{};
     renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
     renderingInfo.renderArea.extent = swapchain.extent;
     renderingInfo.layerCount = 1;
     renderingInfo.colorAttachmentCount = 1;
     renderingInfo.pColorAttachments = &colorAttachment;
+    renderingInfo.pDepthAttachment = &depthAttachment;
     vkCmdBeginRendering(frame.commandBuffer, &renderingInfo);
 
+    /*
+     * Draw the floor using its pipeline, mesh and camera transform.
+     * Set viewport and scissor from the current swapchain dimensions instead of baking them into the pipeline.
+     * The floor also writes depth so later opaque geometry is tested against it correctly.
+     */
     vkCmdBindPipeline(frame.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
     // Positive viewport height pairs with the Y flip in the camera projection.
     VkViewport viewport{};
@@ -151,20 +214,39 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     vkCmdSetScissor(frame.commandBuffer, 0, 1, &scissor);
 
     const VkDeviceSize vertexOffset = 0;
-    vkCmdBindVertexBuffers(frame.commandBuffer, 0, 1, &vertexBuffer, &vertexOffset);
-    vkCmdBindIndexBuffer(frame.commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindVertexBuffers(frame.commandBuffer, 0, 1, &floor.vertexBuffer, &vertexOffset);
+    vkCmdBindIndexBuffer(frame.commandBuffer, floor.indexBuffer, 0, VK_INDEX_TYPE_UINT16);
     vkCmdPushConstants(frame.commandBuffer, layout, VK_SHADER_STAGE_VERTEX_BIT,
                        0, sizeof(viewProjection), &viewProjection);
-    vkCmdDrawIndexed(frame.commandBuffer, indexCount, 1, 0, 0, 0);
+    vkCmdDrawIndexed(frame.commandBuffer, floor.indexCount, 1, 0, 0, 0);
+
+    /*
+     * Draw all spheres with one shared mesh and a separate per-instance position stream.
+     * The sphere vertex shader combines local vertices with each instance position.
+     * This is a direct instanced draw of every object; frustum culling and indirect commands come later.
+     */
+    vkCmdBindPipeline(frame.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, spherePipeline);
+    const VkBuffer sphereBuffers[]{spheres.vertexBuffer, spheres.instanceBuffer};
+    const VkDeviceSize sphereOffsets[]{0, 0};
+    vkCmdBindVertexBuffers(frame.commandBuffer, 0, 2, sphereBuffers, sphereOffsets);
+    vkCmdBindIndexBuffer(frame.commandBuffer, spheres.indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    // Both pipeline layouts have the same camera push-constant range.
+    vkCmdDrawIndexed(frame.commandBuffer, spheres.indexCount, spheres.instanceCount, 0, 0, 0);
 
     vkCmdEndRendering(frame.commandBuffer);
 
+    /*
+     * Finish recording and prepare the colour image for presentation.
+     * Order colour writes before the presentation layout transition, then end the command buffer.
+     * Depth stays off-screen and will be cleared again next frame; only the colour image is presented.
+     */
     VkImageMemoryBarrier2 toPresent = toColor;
     toPresent.srcAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
     toPresent.dstStageMask = VK_PIPELINE_STAGE_2_NONE;
     toPresent.dstAccessMask = VK_ACCESS_2_NONE;
     toPresent.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
     toPresent.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    dependency.imageMemoryBarrierCount = 1;
     dependency.pImageMemoryBarriers = &toPresent;
     vkCmdPipelineBarrier2(frame.commandBuffer, &dependency);
 
@@ -172,6 +254,11 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
         return FrameResult::Failed;
     }
 
+    /*
+     * Submit recorded work with synchronization between acquisition, drawing and presentation.
+     * The submission waits for its colour image and signals the semaphore associated with that image.
+     * Reset the fence only immediately before submission, so an earlier return cannot leave an unsignaled idle fence.
+     */
     VkSemaphoreSubmitInfo waitInfo{};
     waitInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO;
     waitInfo.semaphore = frame.imageAvailable;
@@ -198,6 +285,11 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
         return FrameResult::Failed;
     }
 
+    /*
+     * Present the completed colour image after its render-finished semaphore is signaled.
+     * Report an outdated swapchain to the main loop so it can rebuild window-dependent resources.
+     * A successful return means this frame was queued for presentation, not that every object was visible.
+     */
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;

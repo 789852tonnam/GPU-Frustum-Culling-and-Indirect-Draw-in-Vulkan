@@ -9,6 +9,11 @@
 #include <limits>
 #include <optional>
 
+/*
+ * Swapchain cleanup: release image views before releasing the swapchain that owns the images.
+ * The caller must first wait until rendering and presentation no longer use these resources.
+ * Reset the state so shutdown can also handle a partially completed creation safely.
+ */
 void destroySwapchain(VkDevice device, SwapchainState& swapchain) {
     for (const VkImageView view : swapchain.views) {
         vkDestroyImageView(device, view, nullptr);
@@ -22,6 +27,11 @@ void destroySwapchain(VkDevice device, SwapchainState& swapchain) {
 
 bool createSwapchain(VkPhysicalDevice physicalDevice, VkDevice device,
                      VkSurfaceKHR surface, GLFWwindow* window, SwapchainState& swapchain) {
+    /*
+     * Surface configuration: query what the current window system and GPU can present.
+     * Choose a renderable colour format, preferring sRGB for the renderer's colour output.
+     * Query errors or missing usable formats stop creation before requesting any swapchain images.
+     */
     VkSurfaceCapabilitiesKHR capabilities{};
     VkResult result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &capabilities);
     if (!checkVulkan(result, "Read swapchain surface capabilities")) {
@@ -73,6 +83,11 @@ bool createSwapchain(VkPhysicalDevice physicalDevice, VkDevice device,
         return false;
     }
 
+    /*
+     * Image dimensions and presentation options.
+     * Match the framebuffer size within the surface's limits, then select a legal image count and alpha mode.
+     * A window with no drawable area must be handled by the waiting logic before reaching this point.
+     */
     int width = 0;
     int height = 0;
     glfwGetFramebufferSize(window, &width, &height);
@@ -115,6 +130,11 @@ bool createSwapchain(VkPhysicalDevice physicalDevice, VkDevice device,
         return false;
     }
 
+    /*
+     * Create the presentation image set using the chosen surface settings.
+     * FIFO presentation follows the display's presentation schedule and is supported by ordinary surfaces.
+     * Store the selected format and extent so pipelines and attachments can match these images.
+     */
     VkSwapchainCreateInfoKHR swapchainInfo{};
     swapchainInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     swapchainInfo.surface = surface;
@@ -137,6 +157,11 @@ bool createSwapchain(VkPhysicalDevice physicalDevice, VkDevice device,
     swapchain.format = surfaceFormat->format;
     swapchain.extent = extent;
 
+    /*
+     * Obtain the actual images and create views used as rendering attachments.
+     * The swapchain owns the images; this module owns the additional views created for them.
+     * If enumeration or view creation fails, release the partial swapchain before returning.
+     */
     // The implementation may provide more images than the requested minimum.
     do {
         result = vkGetSwapchainImagesKHR(device, swapchain.handle, &imageCount, nullptr);

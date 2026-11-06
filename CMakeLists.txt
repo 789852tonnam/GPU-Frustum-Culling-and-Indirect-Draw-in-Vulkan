@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 project(gpu_culling_vulkan VERSION 0.1.0 LANGUAGES CXX)
 
+# Dependencies: locate Vulkan and the libraries used for windows and camera mathematics.
+# Prefer installed GLFW and GLM packages; fetch the specified upstream releases when unavailable.
+# Vulkan supplies the headers, loader and shader compiler needed by the build below.
 find_package(Vulkan 1.3 REQUIRED COMPONENTS glslc)
 find_package(glfw3 3.4.0 EXACT CONFIG QUIET)
 if(NOT TARGET glfw)
@@ -28,6 +31,9 @@ if(NOT TARGET glm::glm)
     FetchContent_MakeAvailable(glm)
 endif()
 
+# Application target: build only this project's renderer sources and list its shader inputs.
+# C++20 and the linked library targets provide the language and platform requirements.
+# Record the shader output directory so runtime loading does not depend on the launch directory.
 add_executable(gpu_culling
     src/main.cpp
     src/device.cpp
@@ -36,9 +42,13 @@ add_executable(gpu_culling
     src/swapchain.hpp
     src/frame.cpp
     src/frame.hpp
+    src/depth.cpp
+    src/depth.hpp
     src/vulkan_utils.hpp
     shaders/floor.vert
     shaders/floor.frag
+    shaders/sphere.vert
+    shaders/sphere.frag
 )
 target_compile_features(gpu_culling PRIVATE cxx_std_20)
 set_target_properties(gpu_culling PROPERTIES CXX_EXTENSIONS OFF)
@@ -47,8 +57,11 @@ target_compile_definitions(gpu_culling PRIVATE
     GPU_CULLING_SHADER_DIR="${CMAKE_CURRENT_BINARY_DIR}/shaders"
 )
 
+# Shader build: compile every GLSL stage into Vulkan-compatible SPIR-V in the build tree.
+# Track source dependencies so changing a shader automatically rebuilds its corresponding binary.
+# Make the executable depend on these outputs before it can be launched.
 set(SHADER_BINARIES)
-foreach(SHADER floor.vert floor.frag)
+foreach(SHADER floor.vert floor.frag sphere.vert sphere.frag)
     set(SHADER_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/shaders/${SHADER}")
     set(SHADER_BINARY "${CMAKE_CURRENT_BINARY_DIR}/shaders/${SHADER}.spv")
     add_custom_command(
@@ -64,6 +77,9 @@ endforeach()
 add_custom_target(gpu_culling_shaders DEPENDS ${SHADER_BINARIES})
 add_dependencies(gpu_culling gpu_culling_shaders)
 
+# Compiler diagnostics: enable the normal warning level for the active compiler family.
+# Keep these options local to the application target instead of imposing them on dependencies.
+# Platform-specific choices here affect build diagnostics rather than rendering behavior.
 if(MSVC)
     target_compile_options(gpu_culling PRIVATE /W4 /permissive-)
 else()

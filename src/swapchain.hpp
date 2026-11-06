@@ -6,6 +6,11 @@
 
 struct GLFWwindow;
 
+/*
+ * Presentation state: retain the current swapchain and the images available for display.
+ * Views expose those images to rendering; format and extent describe their shared configuration.
+ * Recreate this state when the window changes, after waiting for all users of the old images.
+ */
 struct SwapchainState {
     VkSwapchainKHR handle = VK_NULL_HANDLE;
     VkFormat format = VK_FORMAT_UNDEFINED;

@@ -1,14 +1,17 @@
 # GPU Frustum Culling and Indirect Draw in Vulkan
 
 A C++20 / Vulkan project for GPU frustum culling and indirect drawing.
-The current version renders a checkerboard floor with a rotating camera; culling and indirect drawing are not implemented yet.
+The current version renders a checkerboard floor and 400 spheres with a rotating camera; culling and indirect drawing are not implemented yet.
 
 ## Current behavior
 
 - Inspects physical devices and queue families, then selects a GPU with graphics, compute, and presentation support in one queue family.
 - Creates a window surface, logical device, swapchain, and image views.
 - Draws a 20 × 20 metre floor with 1-metre gray checker cells over a dark-blue background using dynamic rendering and an indexed graphics pipeline.
-- Uploads floor vertices and indices into host-visible buffer memory and sends the camera's view-projection matrix to the vertex shader through push constants.
+- Prepares 400 sphere positions on the CPU in a centered 20 × 20 grid, with 1-metre center spacing and radius 0.25 metres. Centers sit 0.25 metres above the floor.
+- Generates one shared sphere mesh: 16 slices and 8 stacks, giving 114 local-space vertices and 224 triangles with outward winding. Draws all 400 instances using a second vertex binding for per-instance positions and simple fixed directional lighting.
+- Uploads floor/sphere vertices, indices and sphere positions into host-visible buffer memory through a shared create/allocate/upload helper. Sends the camera's view-projection matrix through push constants.
+- Uses a depth attachment for correct opaque visibility, clears it every frame and recreates it with the swapchain size. Selects a supported depth-only format (D32 float preferred, D16 fallback).
 - Rotates the camera in place once every ten seconds of active preview time, keeping its position at (0, 2, 0) and downward pitch at 20 degrees.
 - Updates perspective for the current drawable size; minimize/zero-size pauses rendering and rotation, and restore resumes the same rotation phase.
 - Handles resize and minimize/restore, and releases resources on exit. Press Escape or close the window to quit.
@@ -32,7 +35,7 @@ cmake -S . -B build
 cmake --build build --config Debug
 ```
 
-The build compiles `shaders/floor.vert` and `shaders/floor.frag` into SPIR-V files in `build/shaders/`.
+The build compiles the floor and sphere vertex/fragment shaders into SPIR-V files in `build/shaders/`.
 The executable loads shaders from the absolute build path recorded by CMake, so it can be launched from another working directory. Reconfigure and rebuild if relocating the build tree.
 
 ## Run
@@ -61,10 +64,12 @@ Append `--smoke-test` for a short rendering and shutdown check.
 
 | File | Responsibility |
 |---|---|
-| `src/main.cpp` | Floor/camera resources, shader loading, graphics pipeline setup, window/instance/surface setup, event loop, resize coordination, and shutdown. |
+| `src/main.cpp` | Floor/sphere scene data and uploads, shader loading, graphics pipelines, window/instance/surface setup, event loop, resize coordination, and shutdown. |
 | `src/device.hpp / .cpp` | Device inspection, GPU selection, and logical-device/queue creation. |
 | `src/swapchain.hpp / .cpp` | Swapchain state, images, image views, and cleanup. |
 | `src/frame.hpp / .cpp` | Frame resources, command recording, synchronization, and presentation. |
+| `src/depth.hpp / .cpp` | Depth attachment format, image, memory, view, and cleanup. |
 | `src/vulkan_utils.hpp` | Shared Vulkan result-checking helper. |
 | `shaders/floor.vert / .frag` | Camera transformation and procedural checkerboard color. |
+| `shaders/sphere.vert / .frag` | Per-instance translation and simple sphere lighting. |
 | `CMakeLists.txt` | Executable sources, dependencies, shader compilation, and compiler options. |

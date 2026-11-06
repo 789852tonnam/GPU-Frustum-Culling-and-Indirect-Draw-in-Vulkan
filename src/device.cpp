@@ -8,6 +8,11 @@
 
 namespace {
 
+/*
+ * Device diagnostics: describe hardware types and inspect available queue families.
+ * Graphics, compute and presentation must share one family for this project's simple submission path.
+ * Record a suitable family while printing capabilities so selection decisions remain visible.
+ */
 const char* deviceTypeName(VkPhysicalDeviceType type) {
     switch (type) {
     case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: return "Integrated GPU";
@@ -64,6 +69,11 @@ bool printQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface,
     return true;
 }
 
+/*
+ * Presentation requirements: verify that this GPU can use the window's surface.
+ * Check swapchain support, available image formats and modes, and colour-attachment usage.
+ * Distinguish an unsupported device from a failed query so normal rejection is not treated as an API error.
+ */
 // Return false for query errors. Unsupported capabilities use supported = false.
 bool checkSwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface, bool& supported) {
     supported = false;
@@ -124,6 +134,11 @@ bool checkSwapchainSupport(VkPhysicalDevice device, VkSurfaceKHR surface, bool& 
     return true;
 }
 
+/*
+ * Selection policy: prefer a discrete GPU over integrated and virtual devices.
+ * This score only compares devices that have already passed the capability checks.
+ * Equal scores keep the first eligible device; the policy is not a performance benchmark.
+ */
 int devicePriority(VkPhysicalDeviceType type) {
     switch (type) {
     case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: return 3;
@@ -135,6 +150,11 @@ int devicePriority(VkPhysicalDeviceType type) {
 
 } // namespace
 
+/*
+ * Physical-device selection: inspect actual devices and choose one that meets the renderer's requirements.
+ * Reject software CPU rendering and require Vulkan 1.3, the needed features and usable presentation.
+ * Return the chosen physical-device handle and queue family without creating a logical device yet.
+ */
 bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, DeviceSelection& selection) {
     selection = {};
     uint32_t deviceCount = 0;
@@ -230,6 +250,11 @@ bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, DeviceSelec
     return true;
 }
 
+/*
+ * Logical-device creation: open the selected GPU for this application's work.
+ * Request one queue and enable only the rendering/synchronization features checked during selection.
+ * Fill the caller's device and queue handles; main later waits for work and destroys the device.
+ */
 bool createLogicalDevice(const DeviceSelection& selection, VkDevice& device, VkQueue& queue) {
     device = VK_NULL_HANDLE;
     queue = VK_NULL_HANDLE;
