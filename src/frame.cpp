@@ -81,7 +81,7 @@ bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
 FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swapchain,
                       FrameState& frame, VkPipeline pipeline, VkPipelineLayout layout,
                       VkPipeline spherePipeline, const MeshDraw& floor, const MeshDraw& spheres,
-                      const DepthState& depth,
+                      const DepthState& depth, CullingState& culling,
                       const glm::mat4& viewProjection) {
     /*
      * Reuse the frame safely and acquire a destination image.
@@ -122,6 +122,7 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     if (!checkVulkan(vkBeginCommandBuffer(frame.commandBuffer, &beginInfo), "Begin command buffer")) {
         return FrameResult::Failed;
     }
+    recordCulling(frame.commandBuffer, culling, viewProjection);
 
     /*
      * Prepare colour and depth images for attachment access.
@@ -221,9 +222,9 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     vkCmdDrawIndexed(frame.commandBuffer, floor.indexCount, 1, 0, 0, 0);
 
     /*
-     * Draw all spheres with one shared mesh and a separate per-instance position stream.
-     * The sphere vertex shader combines local vertices with each instance position.
-     * This is a direct instanced draw of every object; frustum culling and indirect commands come later.
+     * Draw surviving spheres from the GPU-written fixed-slot indirect commands.
+     * Each command keeps its original object ID in firstInstance, selecting the matching position.
+     * Rejected objects keep their slots but use instanceCount zero; no command compaction is needed.
      */
     vkCmdBindPipeline(frame.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, spherePipeline);
     const VkBuffer sphereBuffers[]{spheres.vertexBuffer, spheres.instanceBuffer};
@@ -231,7 +232,8 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     vkCmdBindVertexBuffers(frame.commandBuffer, 0, 2, sphereBuffers, sphereOffsets);
     vkCmdBindIndexBuffer(frame.commandBuffer, spheres.indexBuffer, 0, VK_INDEX_TYPE_UINT16);
     // Both pipeline layouts have the same camera push-constant range.
-    vkCmdDrawIndexed(frame.commandBuffer, spheres.indexCount, spheres.instanceCount, 0, 0, 0);
+    vkCmdDrawIndexedIndirect(frame.commandBuffer, culling.commands, 0, spheres.instanceCount,
+                             sizeof(VkDrawIndexedIndirectCommand));
 
     vkCmdEndRendering(frame.commandBuffer);
 

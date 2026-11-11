@@ -639,7 +639,7 @@ int main(int argc, char** argv) {
     std::cout << "Vulkan window surface created.\n";
 
     DeviceSelection selection{};
-    if (!selectPhysicalDevice(instance, surface, selection)) {
+    if (!selectPhysicalDevice(instance, surface, static_cast<uint32_t>(sphereCount), selection)) {
         vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
@@ -704,15 +704,20 @@ int main(int argc, char** argv) {
     VkDeviceMemory sphereVertexMemory = VK_NULL_HANDLE;
     VkDeviceMemory sphereIndexMemory = VK_NULL_HANDLE;
     VkDeviceMemory spherePositionMemory = VK_NULL_HANDLE;
+    std::array<VkDrawIndexedIndirectCommand, sphereCount> indirectCommands{};
+    VkBuffer indirectBuffer = VK_NULL_HANDLE;
+    VkDeviceMemory indirectMemory = VK_NULL_HANDLE;
     const std::filesystem::path shaderDirectory{GPU_CULLING_SHADER_DIR};
     VkShaderModule vertexShader = VK_NULL_HANDLE;
     VkShaderModule fragmentShader = VK_NULL_HANDLE;
     VkShaderModule sphereVertexShader = VK_NULL_HANDLE;
     VkShaderModule sphereFragmentShader = VK_NULL_HANDLE;
+    VkShaderModule cullingShader = VK_NULL_HANDLE;
     GraphicsPipelineState graphicsPipeline{};
     GraphicsPipelineState spherePipeline{};
     DepthState depth{};
     FrameState frame{};
+    CullingState culling{};
     /*
      * Create scene resources once before rendering starts.
      * Upload floor, sphere and instance data, then load shaders and create pipelines and frame state.
@@ -731,11 +736,18 @@ int main(int argc, char** argv) {
                    createUploadedGeometryBuffer(selection.device, device, sphereGeometry.indices.data(), sphereIndexBytes,
                                                 VK_BUFFER_USAGE_INDEX_BUFFER_BIT, sphereDraw.indexBuffer, sphereIndexMemory) &&
                    createUploadedGeometryBuffer(selection.device, device, spherePositions.data(), spherePositionBytes,
-                                                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, sphereDraw.instanceBuffer, spherePositionMemory) &&
+                                                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                                sphereDraw.instanceBuffer, spherePositionMemory) &&
+                   createUploadedGeometryBuffer(selection.device, device, indirectCommands.data(), sizeof(indirectCommands),
+                                                VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                                indirectBuffer, indirectMemory) &&
                    loadShaderModule(device, shaderDirectory / "floor.vert.spv", vertexShader) &&
                    loadShaderModule(device, shaderDirectory / "floor.frag.spv", fragmentShader) &&
                    loadShaderModule(device, shaderDirectory / "sphere.vert.spv", sphereVertexShader) &&
                    loadShaderModule(device, shaderDirectory / "sphere.frag.spv", sphereFragmentShader) &&
+                   loadShaderModule(device, shaderDirectory / "cull.comp.spv", cullingShader) &&
+                   createCullingState(device, cullingShader, sphereDraw.instanceBuffer, indirectBuffer,
+                                      sphereRadius, sphereDraw.instanceCount, sphereDraw.indexCount, culling) &&
                    createGraphicsPipeline(device, swapchain.format, depth.format,
                                           vertexShader, fragmentShader, false, graphicsPipeline) &&
                    createGraphicsPipeline(device, swapchain.format, depth.format,
@@ -745,12 +757,12 @@ int main(int argc, char** argv) {
         std::cout << "Geometry buffers ready: vertex " << vertexBytes
                   << " bytes, index " << indexBytes << " bytes; ready to draw.\n"
                   << "Sphere buffers uploaded: one shared mesh, " << sphereDraw.instanceCount
-                  << " instances; draw-all rendering without culling.\n";
+                  << " instances; GPU frustum culling with fixed-slot indirect drawing.\n";
     }
     /*
      * Preview loop: process events, update the camera and draw the existing scene each frame.
      * Derive rotation from elapsed active time and rebuild window-dependent resources when needed.
-     * Submit every sphere instance; this version has no frustum culling or indirect drawing yet.
+     * GPU compute rewrites visibility and draw parameters before indirect drawing each frame.
      */
     framebufferResized = false;
     uint64_t presentedFrames = 0;
@@ -793,7 +805,7 @@ int main(int argc, char** argv) {
             createCameraViewProjection(camera, swapchain.extent);
         const FrameResult frameResult = drawFrame(
             device, queue, swapchain, frame, graphicsPipeline.handle, graphicsPipeline.layout,
-            spherePipeline.handle, floorDraw, sphereDraw, depth, viewProjection);
+            spherePipeline.handle, floorDraw, sphereDraw, depth, culling, viewProjection);
         if (frameResult == FrameResult::OutOfDate) {
             std::cout << "Swapchain is out of date; requesting recreation.\n";
             framebufferResized = true;
@@ -820,9 +832,13 @@ int main(int argc, char** argv) {
     if (!checkVulkan(vkDeviceWaitIdle(device), "Wait for device at shutdown")) {
         success = false;
     }
+    if (smokeTest && success) {
+        success = verifyCulling(device, indirectMemory, culling, spherePositions);
+    }
     std::cout << "Frames submitted for presentation: " << presentedFrames << '\n';
     std::cout << "Swapchain recreations: " << swapchainRecreations << '\n';
     destroyFrameState(device, frame);
+    destroyCullingState(device, culling);
     std::cout << "Frame resources destroyed.\n";
     destroyGraphicsPipeline(device, graphicsPipeline);
     destroyGraphicsPipeline(device, spherePipeline);
@@ -831,6 +847,7 @@ int main(int argc, char** argv) {
     vkDestroyShaderModule(device, vertexShader, nullptr);
     vkDestroyShaderModule(device, sphereFragmentShader, nullptr);
     vkDestroyShaderModule(device, sphereVertexShader, nullptr);
+    vkDestroyShaderModule(device, cullingShader, nullptr);
     std::cout << "Shader modules destroyed.\n";
     // All buffer handles belong to main, including partial setup after an initialization failure.
     vkDestroyBuffer(device, floorDraw.indexBuffer, nullptr);
@@ -838,11 +855,13 @@ int main(int argc, char** argv) {
     vkDestroyBuffer(device, sphereDraw.instanceBuffer, nullptr);
     vkDestroyBuffer(device, sphereDraw.indexBuffer, nullptr);
     vkDestroyBuffer(device, sphereDraw.vertexBuffer, nullptr);
+    vkDestroyBuffer(device, indirectBuffer, nullptr);
     vkFreeMemory(device, indexMemory, nullptr);
     vkFreeMemory(device, vertexMemory, nullptr);
     vkFreeMemory(device, spherePositionMemory, nullptr);
     vkFreeMemory(device, sphereIndexMemory, nullptr);
     vkFreeMemory(device, sphereVertexMemory, nullptr);
+    vkFreeMemory(device, indirectMemory, nullptr);
     std::cout << "Geometry buffers destroyed; memory freed.\n";
     destroyDepthState(device, depth);
     destroySwapchain(device, swapchain);

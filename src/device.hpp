@@ -12,5 +12,6 @@ struct DeviceSelection {
     uint32_t queueFamilyIndex = 0;
 };
 
-bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, DeviceSelection& selection);
+bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface,
+                           uint32_t indirectDrawCount, DeviceSelection& selection);
 bool createLogicalDevice(const DeviceSelection& selection, VkDevice& device, VkQueue& queue);

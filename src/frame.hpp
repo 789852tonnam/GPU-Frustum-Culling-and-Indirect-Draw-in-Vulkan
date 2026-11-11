@@ -2,6 +2,7 @@
 
 #include "swapchain.hpp"
 #include "depth.hpp"
+#include "culling.hpp"
 
 #include <glm/mat4x4.hpp>
 
@@ -50,5 +51,5 @@ bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
 FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swapchain,
                       FrameState& frame, VkPipeline pipeline, VkPipelineLayout layout,
                       VkPipeline spherePipeline, const MeshDraw& floor, const MeshDraw& spheres,
-                      const DepthState& depth,
+                      const DepthState& depth, CullingState& culling,
                       const glm::mat4& viewProjection);

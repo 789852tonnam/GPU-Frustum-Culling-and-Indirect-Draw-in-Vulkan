@@ -1,0 +1,41 @@
+#version 450
+
+/*
+ * Per-object frustum culling: one invocation owns one fixed indirect-command slot.
+ * Positions reuse the packed three-float instance buffer; no vec3-array padding is assumed.
+ * Rewriting every command, including rejected objects, prevents visibility from leaking between frames.
+ */
+layout(local_size_x = 64) in;
+struct Position { float x; float y; float z; };
+struct DrawCommand {
+    uint indexCount;
+    uint instanceCount;
+    uint firstIndex;
+    int vertexOffset;
+    uint firstInstance;
+};
+layout(std430, set = 0, binding = 0) readonly buffer Positions { Position positions[]; };
+layout(std430, set = 0, binding = 1) writeonly buffer Commands { DrawCommand commands[]; };
+layout(push_constant) uniform CullingParameters {
+    vec4 planes[6];
+    float radius;
+    uint objectCount;
+    uint indexCount;
+} parameters;
+
+void main() {
+    uint object = gl_GlobalInvocationID.x;
+    if (object >= parameters.objectCount) {
+        return;
+    }
+    Position position = positions[object];
+    vec4 centre = vec4(position.x, position.y, position.z, 1.0);
+    bool visible = true;
+    for (uint plane = 0; plane < 6; ++plane) {
+        if (dot(parameters.planes[plane], centre) < -parameters.radius - 1e-5) {
+            visible = false;
+            break;
+        }
+    }
+    commands[object] = DrawCommand(parameters.indexCount, visible ? 1u : 0u, 0u, 0, object);
+}

@@ -155,7 +155,8 @@ int devicePriority(VkPhysicalDeviceType type) {
  * Reject software CPU rendering and require Vulkan 1.3, the needed features and usable presentation.
  * Return the chosen physical-device handle and queue family without creating a logical device yet.
  */
-bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, DeviceSelection& selection) {
+bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface,
+                           uint32_t indirectDrawCount, DeviceSelection& selection) {
     selection = {};
     uint32_t deviceCount = 0;
     std::vector<VkPhysicalDevice> devices;
@@ -225,6 +226,12 @@ bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, DeviceSelec
             std::cout << "  Skip: dynamicRendering and synchronization2 are required.\n\n";
             continue;
         }
+        if (!features.features.multiDrawIndirect || !features.features.drawIndirectFirstInstance ||
+            properties.limits.maxDrawIndirectCount < indirectDrawCount) {
+            std::cout << "  Skip: fixed-slot indirect drawing needs multiDrawIndirect, "
+                         "drawIndirectFirstInstance and a sufficient draw-count limit.\n\n";
+            continue;
+        }
 
         bool swapchainSupported = false;
         if (!checkSwapchainSupport(device, surface, swapchainSupported)) {
@@ -271,11 +278,15 @@ bool createLogicalDevice(const DeviceSelection& selection, VkDevice& device, VkQ
     enabledFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
     enabledFeatures.dynamicRendering = VK_TRUE;
     enabledFeatures.synchronization2 = VK_TRUE;
+    VkPhysicalDeviceFeatures indirectFeatures{};
+    indirectFeatures.multiDrawIndirect = VK_TRUE;
+    indirectFeatures.drawIndirectFirstInstance = VK_TRUE;
 
     const char* extensions[] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     VkDeviceCreateInfo deviceInfo{};
     deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceInfo.pNext = &enabledFeatures;
+    deviceInfo.pEnabledFeatures = &indirectFeatures;
     deviceInfo.queueCreateInfoCount = 1;
     deviceInfo.pQueueCreateInfos = &queueInfo;
     deviceInfo.enabledExtensionCount = 1;
@@ -288,7 +299,8 @@ bool createLogicalDevice(const DeviceSelection& selection, VkDevice& device, VkQ
 
     // Queue index 0 is the first (and only) queue requested from this family.
     vkGetDeviceQueue(device, selection.queueFamilyIndex, 0, &queue);
-    std::cout << "Logical device created; dynamicRendering, synchronization2, and VK_KHR_swapchain enabled.\n"
+    std::cout << "Logical device created; dynamicRendering, synchronization2, indirect draw features, "
+                 "and VK_KHR_swapchain enabled.\n"
               << "Queue acquired: family " << selection.queueFamilyIndex << ", queue index 0.\n";
     return true;
 }

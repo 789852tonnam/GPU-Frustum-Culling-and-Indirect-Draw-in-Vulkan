@@ -44,11 +44,14 @@ add_executable(gpu_culling
     src/frame.hpp
     src/depth.cpp
     src/depth.hpp
+    src/culling.cpp
+    src/culling.hpp
     src/vulkan_utils.hpp
     shaders/floor.vert
     shaders/floor.frag
     shaders/sphere.vert
     shaders/sphere.frag
+    shaders/cull.comp
 )
 target_compile_features(gpu_culling PRIVATE cxx_std_20)
 set_target_properties(gpu_culling PROPERTIES CXX_EXTENSIONS OFF)
@@ -61,7 +64,7 @@ target_compile_definitions(gpu_culling PRIVATE
 # Track source dependencies so changing a shader automatically rebuilds its corresponding binary.
 # Make the executable depend on these outputs before it can be launched.
 set(SHADER_BINARIES)
-foreach(SHADER floor.vert floor.frag sphere.vert sphere.frag)
+foreach(SHADER floor.vert floor.frag sphere.vert sphere.frag cull.comp)
     set(SHADER_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/shaders/${SHADER}")
     set(SHADER_BINARY "${CMAKE_CURRENT_BINARY_DIR}/shaders/${SHADER}.spv")
     add_custom_command(
@@ -85,3 +88,11 @@ if(MSVC)
 else()
     target_compile_options(gpu_culling PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+# Small CPU checks cover the clipping convention and boundary cases without a window or GPU.
+enable_testing()
+add_executable(culling_test tests/culling_test.cpp src/culling.cpp)
+target_include_directories(culling_test PRIVATE src)
+target_compile_features(culling_test PRIVATE cxx_std_20)
+target_link_libraries(culling_test PRIVATE Vulkan::Vulkan glm::glm)
+add_test(NAME frustum_culling COMMAND culling_test)
