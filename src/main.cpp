@@ -11,6 +11,7 @@
 #include <glm/vec3.hpp>
 
 #include <array>
+#include <charconv>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -19,6 +20,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <new>
 #include <string_view>
 #include <vector>
 
@@ -39,8 +41,6 @@ const std::array<glm::vec3, 4> floorVertices{{
 // Each group of three indices selects one triangle from those corners.
 constexpr std::array<std::uint16_t, 6> floorIndices{0, 2, 1, 0, 3, 2};
 
-constexpr std::size_t sphereGridSide = 20;
-constexpr std::size_t sphereCount = sphereGridSide * sphereGridSide;
 constexpr uint32_t sphereGroupSide = 4;
 constexpr float sphereRadius = 0.25f;
 constexpr float sphereSpacing = 1.0f;
@@ -50,8 +50,8 @@ constexpr float sphereSpacing = 1.0f;
  * Raise each centre by the sphere radius so its bottom touches the floor.
  * These positions reuse one shared mesh rather than storing a mesh copy per sphere.
  */
-std::array<glm::vec3, sphereCount> createSpherePositions() {
-    std::array<glm::vec3, sphereCount> positions{};
+std::vector<glm::vec3> createSpherePositions(uint32_t sphereGridSide) {
+    std::vector<glm::vec3> positions(static_cast<std::size_t>(sphereGridSide) * sphereGridSide);
     const float halfSpan = static_cast<float>(sphereGridSide - 1) * sphereSpacing * 0.5f;
     for (std::size_t row = 0; row < sphereGridSide; ++row) {
         for (std::size_t column = 0; column < sphereGridSide; ++column) {
@@ -551,29 +551,34 @@ bool recreateSwapchain(const DeviceSelection& selection, VkDevice device,
 int main(int argc, char** argv) {
     /*
      * Startup and CPU scene preparation.
-     * Read the run mode, generate positions and the shared mesh, and initialize the camera.
+     * Read the run mode and grid dimensions, then initialize the camera.
+     * Scene allocation follows device-limit checks below.
      * Smoke tests use the normal rendering path but close automatically after a short run.
      */
     bool smokeTest = false;
     bool grouped = false;
+    uint32_t sphereGridSide = 20;
     for (int index = 1; index < argc; ++index) {
         const std::string_view argument(argv[index]);
         if (argument == "--smoke-test") {
             smokeTest = true;
         } else if (argument == "--grouped") {
             grouped = true;
+        } else if (argument == "--grid-side") {
+            const std::string_view value = index + 1 < argc ? argv[++index] : "";
+            const auto parsed = std::from_chars(value.data(), value.data() + value.size(), sphereGridSide);
+            // Keep the square and original object IDs representable as uint32_t.
+            if (parsed.ec != std::errc{} || parsed.ptr != value.data() + value.size() ||
+                sphereGridSide == 0 || sphereGridSide > 65535) {
+                std::cerr << "Invalid --grid-side: expected an integer from 1 to 65535.\n";
+                return EXIT_FAILURE;
+            }
         } else {
-            std::cerr << "Usage: gpu_culling [--smoke-test] [--grouped]\n";
+            std::cerr << "Usage: gpu_culling [--smoke-test] [--grouped] [--grid-side N]\n";
             return EXIT_FAILURE;
         }
     }
-    const auto spherePositions = createSpherePositions();
-    const auto sphereGeometry = createSphereGeometry();
-    CullingGroups sphereGroups{};
-    if (!createCullingGroups(spherePositions, static_cast<uint32_t>(sphereGridSide),
-                             sphereGroupSide, sphereRadius, sphereGroups)) {
-        return EXIT_FAILURE;
-    }
+    const uint32_t sphereCount = sphereGridSide * sphereGridSide;
     CameraState camera{};
     constexpr double cameraRotationPeriod = 10.0;
 
@@ -611,20 +616,6 @@ int main(int argc, char** argv) {
     });
 
     std::cout << "GLFW window created (960x540). Press Escape or close the window to exit.\n";
-    std::cout << "Scene data prepared on CPU: floor 20 x 20 m, " << floorVertices.size()
-              << " vertices, " << floorIndices.size() << " indices.\n"
-              << "Sphere positions prepared on CPU: " << spherePositions.size()
-              << " spheres, radius " << sphereRadius << " m, center spacing "
-              << sphereSpacing << " m.\n"
-              << "Sphere geometry prepared on CPU: " << sphereGeometry.vertices.size()
-              << " vertices, " << sphereGeometry.indices.size() << " indices ("
-              << sphereGeometry.indices.size() / 3 << " triangles).\n"
-              << "Culling mode: " << (grouped ? "grouped" : "per-object") << "; "
-              << sphereGroups.groups.size() << " groups of up to " << sphereGroupSide << 'x'
-              << sphereGroupSide << " spheres, with full-sphere AABBs.\n"
-              << "Camera position: (" << camera.position.x << ", " << camera.position.y
-              << ", " << camera.position.z << "), yaw " << camera.yawDegrees
-              << ", pitch " << camera.pitchDegrees << " degrees.\n";
 
     /*
      * Connect Vulkan to the window and select a usable GPU.
@@ -689,6 +680,61 @@ int main(int argc, char** argv) {
     std::cout << "GPU timestamp period: " << selection.timestampPeriodNs << " ns/tick, "
               << selection.timestampValidBits << " valid bits.\n";
 
+    const uint32_t groupsPerSide = (sphereGridSide + sphereGroupSide - 1) / sphereGroupSide;
+    const uint32_t groupCount = groupsPerSide * groupsPerSide;
+    const uint32_t dispatchCount = grouped ? groupCount : (sphereCount + 63) / 64;
+    const VkDeviceSize indirectBytes = VkDeviceSize{sphereCount} * sizeof(VkDrawIndexedIndirectCommand);
+    const auto& limits = selectedProperties.limits;
+    // Reject oversized GPU work before allocating the corresponding CPU scene.
+    if (dispatchCount > limits.maxComputeWorkGroupCount[0] ||
+        indirectBytes > limits.maxStorageBufferRange ||
+        VkDeviceSize{sphereCount} * sizeof(glm::vec3) > limits.maxStorageBufferRange ||
+        VkDeviceSize{sphereCount} * sizeof(uint32_t) > limits.maxStorageBufferRange ||
+        VkDeviceSize{groupCount} * sizeof(CullingGroup) > limits.maxStorageBufferRange) {
+        std::cerr << "Grid exceeds this GPU's compute dispatch or storage-buffer limits.\n";
+        vkDestroySurfaceKHR(instance, surface, nullptr);
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+    std::vector<glm::vec3> spherePositions;
+    std::vector<VkDrawIndexedIndirectCommand> indirectCommands;
+    CullingGroups sphereGroups{};
+    bool sceneReady = false;
+    try {
+        spherePositions = createSpherePositions(sphereGridSide);
+        sceneReady = createCullingGroups(spherePositions, sphereGridSide,
+                                         sphereGroupSide, sphereRadius, sphereGroups);
+        indirectCommands.resize(sphereCount);
+    } catch (const std::bad_alloc&) {
+        sceneReady = false;
+        std::cerr << "Not enough CPU memory for the requested sphere grid.\n";
+    }
+    if (!sceneReady) {
+        vkDestroySurfaceKHR(instance, surface, nullptr);
+        vkDestroyInstance(instance, nullptr);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+    const auto sphereGeometry = createSphereGeometry();
+    std::cout << "Scene data prepared on CPU: floor 20 x 20 m, " << floorVertices.size()
+              << " vertices, " << floorIndices.size() << " indices.\n"
+              << "Sphere positions prepared on CPU: " << spherePositions.size()
+              << " spheres (" << sphereGridSide << 'x' << sphereGridSide
+              << "), radius " << sphereRadius << " m, center spacing "
+              << sphereSpacing << " m.\n"
+              << "Sphere geometry prepared on CPU: " << sphereGeometry.vertices.size()
+              << " vertices, " << sphereGeometry.indices.size() << " indices ("
+              << sphereGeometry.indices.size() / 3 << " triangles).\n"
+              << "Culling mode: " << (grouped ? "grouped" : "per-object") << "; "
+              << sphereGroups.groups.size() << " groups of up to " << sphereGroupSide << 'x'
+              << sphereGroupSide << " spheres, with full-sphere AABBs.\n"
+              << "Camera position: (" << camera.position.x << ", " << camera.position.y
+              << ", " << camera.position.z << "), yaw " << camera.yawDegrees
+              << ", pitch " << camera.pitchDegrees << " degrees.\n";
+
     VkDevice device = VK_NULL_HANDLE;
     VkQueue queue = VK_NULL_HANDLE;
     if (!createLogicalDevice(selection, device, queue)) {
@@ -740,7 +786,6 @@ int main(int argc, char** argv) {
     VkDeviceMemory sphereVertexMemory = VK_NULL_HANDLE;
     VkDeviceMemory sphereIndexMemory = VK_NULL_HANDLE;
     VkDeviceMemory spherePositionMemory = VK_NULL_HANDLE;
-    std::array<VkDrawIndexedIndirectCommand, sphereCount> indirectCommands{};
     VkBuffer indirectBuffer = VK_NULL_HANDLE;
     VkDeviceMemory indirectMemory = VK_NULL_HANDLE;
     VkBuffer groupBuffer = VK_NULL_HANDLE;
@@ -778,7 +823,7 @@ int main(int argc, char** argv) {
                    createUploadedGeometryBuffer(selection.device, device, spherePositions.data(), spherePositionBytes,
                                                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
                                                 sphereDraw.instanceBuffer, spherePositionMemory) &&
-                   createUploadedGeometryBuffer(selection.device, device, indirectCommands.data(), sizeof(indirectCommands),
+                   createUploadedGeometryBuffer(selection.device, device, indirectCommands.data(), indirectBytes,
                                                 VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
                                                 indirectBuffer, indirectMemory) &&
                    createUploadedGeometryBuffer(selection.device, device, sphereGroups.groups.data(),

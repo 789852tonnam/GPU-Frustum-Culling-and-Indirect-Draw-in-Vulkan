@@ -103,3 +103,6 @@ add_executable(timing_test tests/timing_test.cpp)
 target_include_directories(timing_test PRIVATE src)
 target_compile_features(timing_test PRIVATE cxx_std_20)
 add_test(NAME gpu_timestamp_math COMMAND timing_test)
+
+add_test(NAME grid_arguments COMMAND ${CMAKE_COMMAND}
+    -DPROGRAM=$<TARGET_FILE:gpu_culling> -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/grid_arguments_test.cmake)

@@ -1,19 +1,19 @@
 # GPU Frustum Culling and Indirect Draw in Vulkan
 
 A C++20 / Vulkan project for GPU frustum culling and indirect drawing.
-The current version renders a checkerboard floor and a 400-sphere grid with individual or grouped GPU frustum culling and the same fixed-slot indexed indirect drawing.
+The current version renders a checkerboard floor and a configurable sphere grid (400 spheres by default) with individual or grouped GPU frustum culling and the same fixed-slot indexed indirect drawing.
 
 ## Current behavior
 
 - Inspects physical devices and queue families, then selects a GPU with graphics, compute, and presentation support in one queue family.
 - Creates a window surface, logical device, swapchain, and image views.
 - Draws a 20 × 20 metre floor with 1-metre gray checker cells over a dark-blue background using dynamic rendering and an indexed graphics pipeline.
-- Prepares 400 sphere positions on the CPU in a centered 20 × 20 grid, with 1-metre center spacing and radius 0.25 metres. Centers sit 0.25 metres above the floor.
+- Prepares sphere positions on the CPU in a centered square grid (20 × 20 by default), with 1-metre center spacing and radius 0.25 metres. `--grid-side N` selects N × N spheres. Centers sit 0.25 metres above the floor plane.
 - Generates one shared sphere mesh: 16 slices and 8 stacks, giving 114 local-space vertices and 224 triangles with outward winding. Uses a second vertex binding for per-instance positions and simple fixed directional lighting.
 - Extracts six normalized frustum planes from the camera's Vulkan zero-to-one-depth view-projection matrix. A compute shader tests each sphere and rewrites one fixed indirect slot per object, setting `instanceCount` to 0 or 1 and preserving the object ID in `firstInstance`.
 - `--grouped` selects a second compute shader: one workgroup tests each group AABB, then its lanes fine-test members only if the group survives. Rejected groups still clear every member's command slot. The default remains per-object testing.
-- Builds 25 static groups from 4 × 4 spatial grid blocks, including full sphere radii in each AABB. An explicit member list preserves original object IDs without sorting or moving position data. `sphereGroupSide` in `src/main.cpp` is the initial experiment setting, not a measured optimum.
-- Synchronizes compute writes before `vkCmdDrawIndexedIndirect` consumes all 400 slots. Both modes keep the same draw path and scene; there is no compaction or occlusion culling. The floor is drawn directly.
+- Builds static groups from 4 × 4 spatial grid blocks (25 groups in the default scene), including partial edge blocks and full sphere radii in each AABB. An explicit member list preserves original object IDs without sorting or moving position data. `sphereGroupSide` in `src/main.cpp` is the initial experiment setting, not a measured optimum.
+- Synchronizes compute writes before `vkCmdDrawIndexedIndirect` consumes one slot per sphere. Both modes keep the same draw path and scene; there is no compaction or occlusion culling. The floor is drawn directly.
 - Uploads floor/sphere vertices, indices and sphere positions into host-visible buffer memory through a shared create/allocate/upload helper. Sends the camera's view-projection matrix through push constants.
 - Uses a depth attachment for correct opaque visibility, clears it every frame and recreates it with the swapchain size. Selects a supported depth-only format (D32 float preferred, D16 fallback).
 - Rotates the camera in place once every ten seconds of active preview time, keeping its position at (0, 2, 0) and downward pitch at 20 degrees.
@@ -27,7 +27,7 @@ The current version renders a checkerboard floor and a 400-sphere grid with indi
 - CMake 3.24+ and a C++20 compiler.
 - Vulkan 1.3+ headers and loader (development package or Vulkan SDK), plus a compatible GPU driver.
 - `glslc` shader compiler (from the Vulkan SDK or the platform's shaderc package).
-- A non-CPU Vulkan device supporting dynamic rendering, synchronization2, `VK_KHR_swapchain`, `multiDrawIndirect`, `drawIndirectFirstInstance`, and at least 400 indirect draws per call. The selected shared queue must support timestamps (`timestampValidBits > 0`) with positive `timestampPeriod`. Selection rejects devices missing these requirements.
+- A non-CPU Vulkan device supporting dynamic rendering, synchronization2, `VK_KHR_swapchain`, `multiDrawIndirect`, `drawIndirectFirstInstance`, and the requested number of indirect draws per call (400 by default). The selected shared queue must support timestamps (`timestampValidBits > 0`) with positive `timestampPeriod`. The grid must also fit compute dispatch and storage-buffer limits. Unsupported sizes are rejected before allocating the CPU scene.
 - GLFW 3.4: CMake uses installed 3.4.0 or fetches the upstream 3.4 tag. Fetching requires Git/network access; building GLFW also needs the platform's window-system development packages.
 - GLM 1.0.1+: CMake uses an installed package or fetches the upstream 1.0.1 tag, which requires Git/network access.
 - A graphical desktop session to run.
@@ -57,6 +57,15 @@ To select grouped culling with the same scene and drawing path:
 ```sh
 ./build/gpu_culling --grouped
 ```
+
+To draw a 40 × 40 grid (1,600 spheres) without rebuilding:
+
+```sh
+./build/gpu_culling --grid-side 40
+./build/gpu_culling --grid-side 40 --grouped
+```
+
+`--grid-side` accepts an integer from 1 to 65535; the actual maximum depends on GPU limits and available memory. Omitting it keeps 20 × 20. Spacing, radius, camera, 4 × 4 groups and the 20-metre floor stay fixed, so larger grids extend beyond the floor and can extend beyond the camera's 100-metre far plane.
 
 To select X11/XWayland when available:
 
@@ -106,4 +115,5 @@ This is timing instrumentation, not a benchmark protocol: FIFO/vsync is unchange
 | `shaders/cull_grouped.comp` | Shared group-AABB rejection followed by per-member sphere tests and fixed-slot commands. |
 | `tests/culling_test.cpp` | Six-plane boundaries, tangent spheres/AABBs, camera transforms, group coverage and partial-block checks. |
 | `tests/timing_test.cpp` | Timestamp period conversion, valid-bit masks, wraparound and overlapping intervals. |
+| `tests/grid_arguments_test.cmake` | Reject invalid or missing grid dimensions before window creation. |
 | `CMakeLists.txt` | Executable sources, dependencies, shader compilation, and compiler options. |
