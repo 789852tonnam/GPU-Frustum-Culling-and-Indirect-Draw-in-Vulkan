@@ -24,8 +24,9 @@ const char* deviceTypeName(VkPhysicalDeviceType type) {
 }
 
 bool printQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface,
-                        std::optional<uint32_t>& unifiedFamily) {
+                        std::optional<uint32_t>& unifiedFamily, uint32_t& timestampValidBits) {
     unifiedFamily.reset();
+    timestampValidBits = 0;
     uint32_t familyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(device, &familyCount, nullptr);
     std::vector<VkQueueFamilyProperties> families(familyCount);
@@ -52,15 +53,18 @@ bool printQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface,
             return false;
         }
 
-        if (!unifiedFamily && family.queueCount > 0 && graphics && compute && present == VK_TRUE) {
+        if (!unifiedFamily && family.queueCount > 0 && graphics && compute && present == VK_TRUE &&
+            family.timestampValidBits > 0) {
             unifiedFamily = index;
+            timestampValidBits = family.timestampValidBits;
         }
 
         std::cout << "    Family " << index
                   << " | Queues: " << family.queueCount
                   << " | Graphics: " << (graphics ? "Yes" : "No")
                   << " | Compute: " << (compute ? "Yes" : "No")
-                  << " | Present: " << (present == VK_TRUE ? "Yes" : "No") << '\n'
+                  << " | Present: " << (present == VK_TRUE ? "Yes" : "No")
+                  << " | Timestamp bits: " << family.timestampValidBits << '\n'
                   << "      Transfer: " << (transfer ? "Yes" : "No")
                   << " | Sparse binding: " << (sparse ? "Yes" : "No")
                   << " | Video decode: " << (videoDecode ? "Yes" : "No")
@@ -197,7 +201,8 @@ bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface,
                   << '.' << VK_API_VERSION_MINOR(properties.apiVersion)
                   << '.' << VK_API_VERSION_PATCH(properties.apiVersion) << '\n';
         std::optional<uint32_t> unifiedFamily;
-        if (!printQueueFamilies(device, surface, unifiedFamily)) {
+        uint32_t timestampValidBits = 0;
+        if (!printQueueFamilies(device, surface, unifiedFamily, timestampValidBits)) {
             return false;
         }
         if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_CPU) {
@@ -209,8 +214,8 @@ bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface,
             std::cout << "  Skip: Vulkan 1.3 or newer is required.\n\n";
             continue;
         }
-        if (!unifiedFamily) {
-            std::cout << "  Skip: no single family supports graphics + compute + present.\n\n";
+        if (!unifiedFamily || properties.limits.timestampPeriod <= 0.0f) {
+            std::cout << "  Skip: no timed graphics + compute + present queue or valid timestamp period.\n\n";
             continue;
         }
 
@@ -247,6 +252,8 @@ bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface,
         if (priority > bestPriority) {
             selection.device = device;
             selection.queueFamilyIndex = *unifiedFamily;
+            selection.timestampValidBits = timestampValidBits;
+            selection.timestampPeriodNs = properties.limits.timestampPeriod;
             bestPriority = priority;
         }
     }

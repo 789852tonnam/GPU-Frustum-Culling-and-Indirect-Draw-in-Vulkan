@@ -46,6 +46,7 @@ add_executable(gpu_culling
     src/depth.hpp
     src/culling.cpp
     src/culling.hpp
+    src/timing.hpp
     src/vulkan_utils.hpp
     shaders/floor.vert
     shaders/floor.frag
@@ -97,3 +98,8 @@ target_include_directories(culling_test PRIVATE src)
 target_compile_features(culling_test PRIVATE cxx_std_20)
 target_link_libraries(culling_test PRIVATE Vulkan::Vulkan glm::glm)
 add_test(NAME frustum_culling COMMAND culling_test)
+
+add_executable(timing_test tests/timing_test.cpp)
+target_include_directories(timing_test PRIVATE src)
+target_compile_features(timing_test PRIVATE cxx_std_20)
+add_test(NAME gpu_timestamp_math COMMAND timing_test)

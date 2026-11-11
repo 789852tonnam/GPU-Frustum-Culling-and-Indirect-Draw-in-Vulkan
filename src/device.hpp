@@ -10,6 +10,8 @@
 struct DeviceSelection {
     VkPhysicalDevice device = VK_NULL_HANDLE;
     uint32_t queueFamilyIndex = 0;
+    uint32_t timestampValidBits = 0;
+    float timestampPeriodNs = 0.0f;
 };
 
 bool selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface,

@@ -23,6 +23,7 @@ void destroyFrameState(VkDevice device, FrameState& frame) {
         // Destroying the pool also frees its command buffer.
         vkDestroyCommandPool(device, frame.commandPool, nullptr);
     }
+    vkDestroyQueryPool(device, frame.timestamps, nullptr);
     frame = {};
 }
 
@@ -31,11 +32,11 @@ void destroyFrameState(VkDevice device, FrameState& frame) {
  * A fence protects CPU reuse of the one frame in flight; semaphores coordinate image acquisition and presentation.
  * Presentation may outlive that fence, so each swapchain image gets its own render-finished semaphore.
  */
-bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
+bool createFrameState(VkDevice device, const DeviceSelection& selection,
                       std::size_t imageCount, FrameState& frame) {
     VkCommandPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolInfo.queueFamilyIndex = queueFamilyIndex;
+    poolInfo.queueFamilyIndex = selection.queueFamilyIndex;
     if (!checkVulkan(vkCreateCommandPool(device, &poolInfo, nullptr, &frame.commandPool),
                      "Create command pool")) {
         return false;
@@ -74,7 +75,39 @@ bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
         }
         frame.renderFinished.push_back(semaphore);
     }
+    VkQueryPoolCreateInfo queryInfo{};
+    queryInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+    queryInfo.queryType = VK_QUERY_TYPE_TIMESTAMP;
+    queryInfo.queryCount = 4;
+    if (!checkVulkan(vkCreateQueryPool(device, &queryInfo, nullptr, &frame.timestamps),
+                     "Create GPU timestamp queries")) {
+        return false;
+    }
+    frame.timestampValidBits = selection.timestampValidBits;
+    frame.timestampPeriodNs = selection.timestampPeriodNs;
     std::cout << "Frame resources created: one command buffer/fence, one frame in flight.\n";
+    return true;
+}
+
+// Separate TOP/BOTTOM intervals may overlap; cullingMs + drawingMs is not the total GPU interval.
+bool collectGpuTimings(VkDevice device, FrameState& frame) {
+    if (!frame.timestampsPending) {
+        return true;
+    }
+    uint64_t timestamps[4]{};
+    if (!checkVulkan(vkGetQueryPoolResults(device, frame.timestamps, 0, 4, sizeof(timestamps),
+                                          timestamps, sizeof(uint64_t), VK_QUERY_RESULT_64_BIT),
+                     "Read completed GPU timestamps")) {
+        return false;
+    }
+    frame.timingSum.cullingMs += timestampMilliseconds(timestamps[0], timestamps[1],
+                                                       frame.timestampValidBits, frame.timestampPeriodNs);
+    frame.timingSum.drawingMs += timestampMilliseconds(timestamps[2], timestamps[3],
+                                                       frame.timestampValidBits, frame.timestampPeriodNs);
+    frame.timingSum.totalMs += timestampMilliseconds(timestamps[0], timestamps[3],
+                                                     frame.timestampValidBits, frame.timestampPeriodNs);
+    ++frame.timingSamples;
+    frame.timestampsPending = false;
     return true;
 }
 
@@ -89,7 +122,7 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
      * Acquisition can request a retry or swapchain rebuild; return before submitting in those cases.
      */
     if (!checkVulkan(vkWaitForFences(device, 1, &frame.inFlight, VK_TRUE, UINT64_MAX),
-                     "Wait for previous frame")) {
+                     "Wait for previous frame") || !collectGpuTimings(device, frame)) {
         return FrameResult::Failed;
     }
 
@@ -122,7 +155,11 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     if (!checkVulkan(vkBeginCommandBuffer(frame.commandBuffer, &beginInfo), "Begin command buffer")) {
         return FrameResult::Failed;
     }
+    vkCmdResetQueryPool(frame.commandBuffer, frame.timestamps, 0, 4);
+    vkCmdWriteTimestamp2(frame.commandBuffer, VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT, frame.timestamps, 0);
     recordCulling(frame.commandBuffer, culling, viewProjection);
+    vkCmdWriteTimestamp2(frame.commandBuffer, VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT, frame.timestamps, 1);
+    vkCmdWriteTimestamp2(frame.commandBuffer, VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT, frame.timestamps, 2);
 
     /*
      * Prepare colour and depth images for attachment access.
@@ -252,6 +289,7 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
     dependency.pImageMemoryBarriers = &toPresent;
     vkCmdPipelineBarrier2(frame.commandBuffer, &dependency);
 
+    vkCmdWriteTimestamp2(frame.commandBuffer, VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT, frame.timestamps, 3);
     if (!checkVulkan(vkEndCommandBuffer(frame.commandBuffer), "End command buffer")) {
         return FrameResult::Failed;
     }
@@ -286,6 +324,7 @@ FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swap
         !checkVulkan(vkQueueSubmit2(queue, 1, &submitInfo, frame.inFlight), "Submit scene frame")) {
         return FrameResult::Failed;
     }
+    frame.timestampsPending = true;
 
     /*
      * Present the completed colour image after its render-finished semaphore is signaled.

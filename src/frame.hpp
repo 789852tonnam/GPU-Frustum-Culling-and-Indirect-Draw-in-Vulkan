@@ -3,6 +3,8 @@
 #include "swapchain.hpp"
 #include "depth.hpp"
 #include "culling.hpp"
+#include "device.hpp"
+#include "timing.hpp"
 
 #include <glm/mat4x4.hpp>
 
@@ -21,6 +23,12 @@ struct FrameState {
     VkFence inFlight = VK_NULL_HANDLE;
     // Presentation can outlive the submission fence: use one semaphore per image.
     std::vector<VkSemaphore> renderFinished;
+    VkQueryPool timestamps = VK_NULL_HANDLE;
+    uint32_t timestampValidBits = 0;
+    float timestampPeriodNs = 0.0f;
+    bool timestampsPending = false;
+    uint64_t timingSamples = 0;
+    GpuTimings timingSum{};
 };
 
 enum class FrameResult { Presented, Retry, OutOfDate, Failed };
@@ -46,8 +54,10 @@ struct MeshDraw {
  * The main loop owns those decisions and supplies live pipelines, mesh buffers and attachments.
  */
 void destroyFrameState(VkDevice device, FrameState& frame);
-bool createFrameState(VkDevice device, uint32_t queueFamilyIndex,
+bool createFrameState(VkDevice device, const DeviceSelection& selection,
                       std::size_t imageCount, FrameState& frame);
+// Read once after a frame fence/device-idle wait; never poll or stall for unfinished results.
+bool collectGpuTimings(VkDevice device, FrameState& frame);
 FrameResult drawFrame(VkDevice device, VkQueue queue, const SwapchainState& swapchain,
                       FrameState& frame, VkPipeline pipeline, VkPipelineLayout layout,
                       VkPipeline spherePipeline, const MeshDraw& floor, const MeshDraw& spheres,

@@ -490,6 +490,19 @@ bool waitForDrawableWindow(GLFWwindow* window, double closeAt = 0.0,
     return false;
 }
 
+// Report only completed GPU intervals from one drawable-size segment; no CPU frame/present time is included.
+void printGpuTimings(const FrameState& frame, VkExtent2D extent, bool grouped) {
+    if (frame.timingSamples == 0) {
+        return;
+    }
+    const double samples = static_cast<double>(frame.timingSamples);
+    std::cout << "GPU timestamps [" << (grouped ? "grouped" : "per-object") << ' '
+              << extent.width << 'x' << extent.height << ", " << frame.timingSamples
+              << " samples]: cull=" << frame.timingSum.cullingMs / samples
+              << " ms draw=" << frame.timingSum.drawingMs / samples
+              << " ms total=" << frame.timingSum.totalMs / samples << " ms\n";
+}
+
 /*
  * Resize-dependent resources: rebuild images and frame state for the current window.
  * Wait for GPU work before replacing the swapchain, depth attachment and synchronization.
@@ -502,13 +515,17 @@ bool recreateSwapchain(const DeviceSelection& selection, VkDevice device,
                        VkShaderModule vertexShader, VkShaderModule fragmentShader,
                        GraphicsPipelineState& pipeline,
                        VkShaderModule sphereVertexShader, VkShaderModule sphereFragmentShader,
-                       GraphicsPipelineState& spherePipeline) {
+                       GraphicsPipelineState& spherePipeline, bool grouped) {
     // Resize is infrequent: finish old work, then rebuild dependent objects.
     // Rebuilding FrameState also updates its per-image semaphore count and
     // starts with fresh synchronization objects after an out-of-date result.
     if (!checkVulkan(vkDeviceWaitIdle(device), "Wait for device before swapchain recreation")) {
         return false;
     }
+    if (!collectGpuTimings(device, frame)) {
+        return false;
+    }
+    printGpuTimings(frame, swapchain.extent, grouped);
     destroyFrameState(device, frame);
     destroyDepthState(device, depth);
     destroySwapchain(device, swapchain);
@@ -526,7 +543,7 @@ bool recreateSwapchain(const DeviceSelection& selection, VkDevice device,
             return false;
         }
     }
-    return createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
+    return createFrameState(device, selection, swapchain.images.size(), frame);
 }
 
 } // namespace
@@ -669,6 +686,8 @@ int main(int argc, char** argv) {
               << "\nSelected queue family: " << selection.queueFamilyIndex
               << " (graphics + compute + present)\n"
               << "Preference: discrete > integrated > virtual > other; ties keep the first eligible device.\n";
+    std::cout << "GPU timestamp period: " << selection.timestampPeriodNs << " ns/tick, "
+              << selection.timestampValidBits << " valid bits.\n";
 
     VkDevice device = VK_NULL_HANDLE;
     VkQueue queue = VK_NULL_HANDLE;
@@ -782,7 +801,7 @@ int main(int argc, char** argv) {
                                           vertexShader, fragmentShader, false, graphicsPipeline) &&
                    createGraphicsPipeline(device, swapchain.format, depth.format,
                                           sphereVertexShader, sphereFragmentShader, true, spherePipeline) &&
-                   createFrameState(device, selection.queueFamilyIndex, swapchain.images.size(), frame);
+                   createFrameState(device, selection, swapchain.images.size(), frame);
     if (success) {
         std::cout << "Geometry buffers ready: vertex " << vertexBytes
                   << " bytes, index " << indexBytes << " bytes; ready to draw.\n"
@@ -823,7 +842,7 @@ int main(int argc, char** argv) {
         if (framebufferResized) {
             success = recreateSwapchain(selection, device, surface, window, swapchain, frame,
                                          depth, vertexShader, fragmentShader, graphicsPipeline,
-                                         sphereVertexShader, sphereFragmentShader, spherePipeline);
+                                         sphereVertexShader, sphereFragmentShader, spherePipeline, grouped);
             if (success) {
                 framebufferResized = false;
                 ++swapchainRecreations;
@@ -843,6 +862,9 @@ int main(int argc, char** argv) {
             success = false;
         } else if (frameResult == FrameResult::Presented) {
             ++presentedFrames;
+            if (presentedFrames % 120 == 0) {
+                printGpuTimings(frame, swapchain.extent, grouped);
+            }
             if (presentedFrames == 1) {
                 std::cout << "First sphere-grid frame submitted for presentation.\n";
             }
@@ -861,7 +883,10 @@ int main(int argc, char** argv) {
     // Wait at shutdown (and during recreation), not after every submitted frame.
     if (!checkVulkan(vkDeviceWaitIdle(device), "Wait for device at shutdown")) {
         success = false;
+    } else if (!collectGpuTimings(device, frame)) {
+        success = false;
     }
+    printGpuTimings(frame, swapchain.extent, grouped);
     if (smokeTest && success) {
         success = verifyCulling(device, indirectMemory, culling, spherePositions);
     }
