@@ -52,6 +52,7 @@ add_executable(gpu_culling
     shaders/sphere.vert
     shaders/sphere.frag
     shaders/cull.comp
+    shaders/cull_grouped.comp
 )
 target_compile_features(gpu_culling PRIVATE cxx_std_20)
 set_target_properties(gpu_culling PROPERTIES CXX_EXTENSIONS OFF)
@@ -64,7 +65,7 @@ target_compile_definitions(gpu_culling PRIVATE
 # Track source dependencies so changing a shader automatically rebuilds its corresponding binary.
 # Make the executable depend on these outputs before it can be launched.
 set(SHADER_BINARIES)
-foreach(SHADER floor.vert floor.frag sphere.vert sphere.frag cull.comp)
+foreach(SHADER floor.vert floor.frag sphere.vert sphere.frag cull.comp cull_grouped.comp)
     set(SHADER_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/shaders/${SHADER}")
     set(SHADER_BINARY "${CMAKE_CURRENT_BINARY_DIR}/shaders/${SHADER}.spv")
     add_custom_command(

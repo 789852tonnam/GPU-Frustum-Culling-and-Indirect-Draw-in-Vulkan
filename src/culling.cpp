@@ -3,8 +3,48 @@
 
 #include <glm/geometric.hpp>
 #include <glm/matrix.hpp>
+#include <glm/common.hpp>
 
+#include <algorithm>
 #include <iostream>
+#include <limits>
+
+// Grid blocks retain original object IDs, and bounds include complete spheres rather than centres alone.
+bool createCullingGroups(std::span<const glm::vec3> positions, uint32_t gridSide,
+                          uint32_t groupSide, float radius, CullingGroups& result) {
+    result = {};
+    if (gridSide == 0 || groupSide == 0 || radius < 0.0f ||
+        positions.size() != static_cast<uint64_t>(gridSide) * gridSide ||
+        positions.size() > std::numeric_limits<uint32_t>::max()) {
+        std::cerr << "Invalid sphere grid or group dimensions.\n";
+        return false;
+    }
+    for (uint32_t firstRow = 0; firstRow < gridSide;) {
+        const uint32_t rowEnd = firstRow + std::min(groupSide, gridSide - firstRow);
+        for (uint32_t firstColumn = 0; firstColumn < gridSide;) {
+            const uint32_t columnEnd = firstColumn + std::min(groupSide, gridSide - firstColumn);
+            CullingGroup group{};
+            group.firstMember = static_cast<uint32_t>(result.members.size());
+            glm::vec3 minimum(std::numeric_limits<float>::max());
+            glm::vec3 maximum(std::numeric_limits<float>::lowest());
+            for (uint32_t row = firstRow; row < rowEnd; ++row) {
+                for (uint32_t column = firstColumn; column < columnEnd; ++column) {
+                    const uint32_t object = row * gridSide + column;
+                    result.members.push_back(object);
+                    minimum = glm::min(minimum, positions[object] - glm::vec3(radius));
+                    maximum = glm::max(maximum, positions[object] + glm::vec3(radius));
+                }
+            }
+            group.minimum = glm::vec4(minimum, 0.0f);
+            group.maximum = glm::vec4(maximum, 0.0f);
+            group.memberCount = static_cast<uint32_t>(result.members.size()) - group.firstMember;
+            result.groups.push_back(group);
+            firstColumn = columnEnd;
+        }
+        firstRow = rowEnd;
+    }
+    return true;
+}
 
 /*
  * Frustum preparation: derive world-space planes from Vulkan's clip inequalities.
@@ -34,6 +74,21 @@ bool sphereInFrustum(const std::array<glm::vec4, 6>& planes, glm::vec3 centre, f
     return true;
 }
 
+// A group can be rejected only when even its farthest corner is outside the same plane.
+bool aabbInFrustum(const std::array<glm::vec4, 6>& planes, const CullingGroup& group) {
+    for (const auto& plane : planes) {
+        const glm::vec3 corner{
+            plane.x >= 0.0f ? group.maximum.x : group.minimum.x,
+            plane.y >= 0.0f ? group.maximum.y : group.minimum.y,
+            plane.z >= 0.0f ? group.maximum.z : group.minimum.z,
+        };
+        if (glm::dot(plane, glm::vec4(corner, 1.0f)) < -1e-5f) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /*
  * Compute lifecycle: bind the existing position buffer and the writable indirect-command buffer.
  * Descriptors describe those buffers; main still owns their memory and releases it after this state.
@@ -48,13 +103,16 @@ void destroyCullingState(VkDevice device, CullingState& culling) {
 }
 
 bool createCullingState(VkDevice device, VkShaderModule shader, VkBuffer positions, VkBuffer commands,
-                        float radius, uint32_t objectCount, uint32_t indexCount, CullingState& culling) {
+                        VkBuffer groups, VkBuffer members, float radius, uint32_t objectCount,
+                        uint32_t indexCount, uint32_t groupCount, bool grouped, CullingState& culling) {
     culling.commands = commands;
     culling.parameters.radius = radius;
     culling.parameters.objectCount = objectCount;
     culling.parameters.indexCount = indexCount;
-    VkDescriptorSetLayoutBinding bindings[2]{};
-    for (uint32_t index = 0; index < 2; ++index) {
+    culling.parameters.groupCount = groupCount;
+    culling.grouped = grouped;
+    VkDescriptorSetLayoutBinding bindings[4]{};
+    for (uint32_t index = 0; index < 4; ++index) {
         bindings[index].binding = index;
         bindings[index].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         bindings[index].descriptorCount = 1;
@@ -62,13 +120,13 @@ bool createCullingState(VkDevice device, VkShaderModule shader, VkBuffer positio
     }
     VkDescriptorSetLayoutCreateInfo descriptorInfo{};
     descriptorInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    descriptorInfo.bindingCount = 2;
+    descriptorInfo.bindingCount = 4;
     descriptorInfo.pBindings = bindings;
     if (!checkVulkan(vkCreateDescriptorSetLayout(device, &descriptorInfo, nullptr, &culling.descriptorLayout),
                      "Create culling descriptor layout")) {
         return false;
     }
-    const VkDescriptorPoolSize poolSize{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2};
+    const VkDescriptorPoolSize poolSize{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 4};
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     poolInfo.maxSets = 1;
@@ -90,9 +148,11 @@ bool createCullingState(VkDevice device, VkShaderModule shader, VkBuffer positio
     const VkDescriptorBufferInfo buffers[]{
         {positions, 0, objectCount * sizeof(glm::vec3)},
         {commands, 0, objectCount * sizeof(VkDrawIndexedIndirectCommand)},
+        {groups, 0, groupCount * sizeof(CullingGroup)},
+        {members, 0, objectCount * sizeof(uint32_t)},
     };
-    VkWriteDescriptorSet writes[2]{};
-    for (uint32_t index = 0; index < 2; ++index) {
+    VkWriteDescriptorSet writes[4]{};
+    for (uint32_t index = 0; index < 4; ++index) {
         writes[index].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         writes[index].dstSet = culling.descriptorSet;
         writes[index].dstBinding = index;
@@ -100,7 +160,7 @@ bool createCullingState(VkDevice device, VkShaderModule shader, VkBuffer positio
         writes[index].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         writes[index].pBufferInfo = &buffers[index];
     }
-    vkUpdateDescriptorSets(device, 2, writes, 0, nullptr);
+    vkUpdateDescriptorSets(device, 4, writes, 0, nullptr);
 
     const VkPushConstantRange pushRange{VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(CullingParameters)};
     VkPipelineLayoutCreateInfo layoutInfo{};
@@ -152,7 +212,9 @@ void recordCulling(VkCommandBuffer commandBuffer, CullingState& culling, const g
                             0, 1, &culling.descriptorSet, 0, nullptr);
     vkCmdPushConstants(commandBuffer, culling.layout, VK_SHADER_STAGE_COMPUTE_BIT,
                        0, sizeof(culling.parameters), &culling.parameters);
-    vkCmdDispatch(commandBuffer, (culling.parameters.objectCount + 63) / 64, 1, 1);
+    const uint32_t workgroups = culling.grouped ? culling.parameters.groupCount
+                                               : (culling.parameters.objectCount + 63) / 64;
+    vkCmdDispatch(commandBuffer, workgroups, 1, 1);
 
     barrier.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT;
     barrier.srcAccessMask = VK_ACCESS_2_SHADER_WRITE_BIT;
@@ -190,7 +252,8 @@ bool verifyCulling(VkDevice device, VkDeviceMemory commandMemory, const CullingS
     }
     vkUnmapMemory(device, commandMemory);
     if (valid) {
-        std::cout << "GPU culling verified: " << visible << '/' << positions.size()
+        std::cout << "GPU " << (culling.grouped ? "grouped" : "per-object")
+                  << " culling verified: " << visible << '/' << positions.size()
                   << " visible; all commands match CPU reference.\n";
     }
     return valid;

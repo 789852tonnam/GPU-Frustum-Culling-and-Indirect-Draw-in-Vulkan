@@ -1,0 +1,66 @@
+#version 450
+
+// One workgroup shares one coarse decision; lanes fine-test members only when that group survives.
+layout(local_size_x = 16) in;
+struct Position { float x; float y; float z; };
+struct DrawCommand {
+    uint indexCount;
+    uint instanceCount;
+    uint firstIndex;
+    int vertexOffset;
+    uint firstInstance;
+};
+struct Group {
+    vec4 minimum;
+    vec4 maximum;
+    uint firstMember;
+    uint memberCount;
+};
+layout(std430, set = 0, binding = 0) readonly buffer Positions { Position positions[]; };
+layout(std430, set = 0, binding = 1) writeonly buffer Commands { DrawCommand commands[]; };
+layout(std430, set = 0, binding = 2) readonly buffer Groups { Group groups[]; };
+layout(std430, set = 0, binding = 3) readonly buffer Members { uint members[]; };
+layout(push_constant) uniform CullingParameters {
+    vec4 planes[6];
+    float radius;
+    uint objectCount;
+    uint indexCount;
+    uint groupCount;
+} parameters;
+shared uint groupVisible;
+
+void main() {
+    uint groupID = gl_WorkGroupID.x;
+    if (groupID >= parameters.groupCount) {
+        return;
+    }
+    Group group = groups[groupID];
+    if (gl_LocalInvocationIndex == 0) {
+        groupVisible = 1;
+        for (uint plane = 0; plane < 6; ++plane) {
+            vec3 corner = mix(group.minimum.xyz, group.maximum.xyz,
+                              greaterThanEqual(parameters.planes[plane].xyz, vec3(0.0)));
+            if (dot(parameters.planes[plane], vec4(corner, 1.0)) < -1e-5) {
+                groupVisible = 0;
+                break;
+            }
+        }
+    }
+    barrier(); // Every lane must see lane zero's coarse decision before testing members.
+    for (uint member = gl_LocalInvocationIndex; member < group.memberCount; member += gl_WorkGroupSize.x) {
+        uint object = members[group.firstMember + member];
+        bool visible = groupVisible != 0;
+        if (visible) {
+            Position position = positions[object];
+            vec4 centre = vec4(position.x, position.y, position.z, 1.0);
+            for (uint plane = 0; plane < 6; ++plane) {
+                if (dot(parameters.planes[plane], centre) < -parameters.radius - 1e-5) {
+                    visible = false;
+                    break;
+                }
+            }
+        }
+        // Rejected groups still clear every member's slot to prevent stale draws after camera movement.
+        commands[object] = DrawCommand(parameters.indexCount, visible ? 1u : 0u, 0u, 0, object);
+    }
+}

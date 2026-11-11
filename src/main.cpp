@@ -41,6 +41,7 @@ constexpr std::array<std::uint16_t, 6> floorIndices{0, 2, 1, 0, 3, 2};
 
 constexpr std::size_t sphereGridSide = 20;
 constexpr std::size_t sphereCount = sphereGridSide * sphereGridSide;
+constexpr uint32_t sphereGroupSide = 4;
 constexpr float sphereRadius = 0.25f;
 constexpr float sphereSpacing = 1.0f;
 
@@ -536,13 +537,26 @@ int main(int argc, char** argv) {
      * Read the run mode, generate positions and the shared mesh, and initialize the camera.
      * Smoke tests use the normal rendering path but close automatically after a short run.
      */
-    const bool smokeTest = argc == 2 && std::string_view(argv[1]) == "--smoke-test";
-    if (argc > 1 && !smokeTest) {
-        std::cerr << "Usage: gpu_culling [--smoke-test]\n";
-        return EXIT_FAILURE;
+    bool smokeTest = false;
+    bool grouped = false;
+    for (int index = 1; index < argc; ++index) {
+        const std::string_view argument(argv[index]);
+        if (argument == "--smoke-test") {
+            smokeTest = true;
+        } else if (argument == "--grouped") {
+            grouped = true;
+        } else {
+            std::cerr << "Usage: gpu_culling [--smoke-test] [--grouped]\n";
+            return EXIT_FAILURE;
+        }
     }
     const auto spherePositions = createSpherePositions();
     const auto sphereGeometry = createSphereGeometry();
+    CullingGroups sphereGroups{};
+    if (!createCullingGroups(spherePositions, static_cast<uint32_t>(sphereGridSide),
+                             sphereGroupSide, sphereRadius, sphereGroups)) {
+        return EXIT_FAILURE;
+    }
     CameraState camera{};
     constexpr double cameraRotationPeriod = 10.0;
 
@@ -588,6 +602,9 @@ int main(int argc, char** argv) {
               << "Sphere geometry prepared on CPU: " << sphereGeometry.vertices.size()
               << " vertices, " << sphereGeometry.indices.size() << " indices ("
               << sphereGeometry.indices.size() / 3 << " triangles).\n"
+              << "Culling mode: " << (grouped ? "grouped" : "per-object") << "; "
+              << sphereGroups.groups.size() << " groups of up to " << sphereGroupSide << 'x'
+              << sphereGroupSide << " spheres, with full-sphere AABBs.\n"
               << "Camera position: (" << camera.position.x << ", " << camera.position.y
               << ", " << camera.position.z << "), yaw " << camera.yawDegrees
               << ", pitch " << camera.pitchDegrees << " degrees.\n";
@@ -707,6 +724,10 @@ int main(int argc, char** argv) {
     std::array<VkDrawIndexedIndirectCommand, sphereCount> indirectCommands{};
     VkBuffer indirectBuffer = VK_NULL_HANDLE;
     VkDeviceMemory indirectMemory = VK_NULL_HANDLE;
+    VkBuffer groupBuffer = VK_NULL_HANDLE;
+    VkBuffer memberBuffer = VK_NULL_HANDLE;
+    VkDeviceMemory groupMemory = VK_NULL_HANDLE;
+    VkDeviceMemory memberMemory = VK_NULL_HANDLE;
     const std::filesystem::path shaderDirectory{GPU_CULLING_SHADER_DIR};
     VkShaderModule vertexShader = VK_NULL_HANDLE;
     VkShaderModule fragmentShader = VK_NULL_HANDLE;
@@ -741,13 +762,22 @@ int main(int argc, char** argv) {
                    createUploadedGeometryBuffer(selection.device, device, indirectCommands.data(), sizeof(indirectCommands),
                                                 VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
                                                 indirectBuffer, indirectMemory) &&
+                   createUploadedGeometryBuffer(selection.device, device, sphereGroups.groups.data(),
+                                                sphereGroups.groups.size() * sizeof(CullingGroup),
+                                                VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, groupBuffer, groupMemory) &&
+                   createUploadedGeometryBuffer(selection.device, device, sphereGroups.members.data(),
+                                                sphereGroups.members.size() * sizeof(uint32_t),
+                                                VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, memberBuffer, memberMemory) &&
                    loadShaderModule(device, shaderDirectory / "floor.vert.spv", vertexShader) &&
                    loadShaderModule(device, shaderDirectory / "floor.frag.spv", fragmentShader) &&
                    loadShaderModule(device, shaderDirectory / "sphere.vert.spv", sphereVertexShader) &&
                    loadShaderModule(device, shaderDirectory / "sphere.frag.spv", sphereFragmentShader) &&
-                   loadShaderModule(device, shaderDirectory / "cull.comp.spv", cullingShader) &&
+                   loadShaderModule(device, shaderDirectory / (grouped ? "cull_grouped.comp.spv" : "cull.comp.spv"),
+                                    cullingShader) &&
                    createCullingState(device, cullingShader, sphereDraw.instanceBuffer, indirectBuffer,
-                                      sphereRadius, sphereDraw.instanceCount, sphereDraw.indexCount, culling) &&
+                                      groupBuffer, memberBuffer, sphereRadius, sphereDraw.instanceCount,
+                                      sphereDraw.indexCount, static_cast<uint32_t>(sphereGroups.groups.size()),
+                                      grouped, culling) &&
                    createGraphicsPipeline(device, swapchain.format, depth.format,
                                           vertexShader, fragmentShader, false, graphicsPipeline) &&
                    createGraphicsPipeline(device, swapchain.format, depth.format,
@@ -856,12 +886,16 @@ int main(int argc, char** argv) {
     vkDestroyBuffer(device, sphereDraw.indexBuffer, nullptr);
     vkDestroyBuffer(device, sphereDraw.vertexBuffer, nullptr);
     vkDestroyBuffer(device, indirectBuffer, nullptr);
+    vkDestroyBuffer(device, groupBuffer, nullptr);
+    vkDestroyBuffer(device, memberBuffer, nullptr);
     vkFreeMemory(device, indexMemory, nullptr);
     vkFreeMemory(device, vertexMemory, nullptr);
     vkFreeMemory(device, spherePositionMemory, nullptr);
     vkFreeMemory(device, sphereIndexMemory, nullptr);
     vkFreeMemory(device, sphereVertexMemory, nullptr);
     vkFreeMemory(device, indirectMemory, nullptr);
+    vkFreeMemory(device, groupMemory, nullptr);
+    vkFreeMemory(device, memberMemory, nullptr);
     std::cout << "Geometry buffers destroyed; memory freed.\n";
     destroyDepthState(device, depth);
     destroySwapchain(device, swapchain);

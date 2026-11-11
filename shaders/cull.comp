@@ -21,6 +21,7 @@ layout(push_constant) uniform CullingParameters {
     float radius;
     uint objectCount;
     uint indexCount;
+    uint groupCount;
 } parameters;
 
 void main() {

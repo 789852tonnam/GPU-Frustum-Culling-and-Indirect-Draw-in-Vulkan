@@ -1,7 +1,7 @@
 # GPU Frustum Culling and Indirect Draw in Vulkan
 
 A C++20 / Vulkan project for GPU frustum culling and indirect drawing.
-The current version renders a checkerboard floor and a 400-sphere grid with per-object GPU frustum culling and indexed indirect drawing.
+The current version renders a checkerboard floor and a 400-sphere grid with individual or grouped GPU frustum culling and the same fixed-slot indexed indirect drawing.
 
 ## Current behavior
 
@@ -11,7 +11,9 @@ The current version renders a checkerboard floor and a 400-sphere grid with per-
 - Prepares 400 sphere positions on the CPU in a centered 20 × 20 grid, with 1-metre center spacing and radius 0.25 metres. Centers sit 0.25 metres above the floor.
 - Generates one shared sphere mesh: 16 slices and 8 stacks, giving 114 local-space vertices and 224 triangles with outward winding. Uses a second vertex binding for per-instance positions and simple fixed directional lighting.
 - Extracts six normalized frustum planes from the camera's Vulkan zero-to-one-depth view-projection matrix. A compute shader tests each sphere and rewrites one fixed indirect slot per object, setting `instanceCount` to 0 or 1 and preserving the object ID in `firstInstance`.
-- Synchronizes compute writes before `vkCmdDrawIndexedIndirect` consumes all 400 slots. Rejected slots remain in the buffer; there is no compaction, grouped culling or occlusion culling yet. The floor is drawn directly.
+- `--grouped` selects a second compute shader: one workgroup tests each group AABB, then its lanes fine-test members only if the group survives. Rejected groups still clear every member's command slot. The default remains per-object testing.
+- Builds 25 static groups from 4 × 4 spatial grid blocks, including full sphere radii in each AABB. An explicit member list preserves original object IDs without sorting or moving position data. `sphereGroupSide` in `src/main.cpp` is the initial experiment setting, not a measured optimum.
+- Synchronizes compute writes before `vkCmdDrawIndexedIndirect` consumes all 400 slots. Both modes keep the same draw path and scene; there is no compaction or occlusion culling. The floor is drawn directly.
 - Uploads floor/sphere vertices, indices and sphere positions into host-visible buffer memory through a shared create/allocate/upload helper. Sends the camera's view-projection matrix through push constants.
 - Uses a depth attachment for correct opaque visibility, clears it every frame and recreates it with the swapchain size. Selects a supported depth-only format (D32 float preferred, D16 fallback).
 - Rotates the camera in place once every ten seconds of active preview time, keeping its position at (0, 2, 0) and downward pitch at 20 degrees.
@@ -37,7 +39,7 @@ cmake -S . -B build
 cmake --build build --config Debug
 ```
 
-The build compiles the floor/sphere vertex/fragment shaders and the culling compute shader into SPIR-V files in `build/shaders/`.
+The build compiles the floor/sphere vertex/fragment shaders and both culling compute shaders into SPIR-V files in `build/shaders/`.
 The executable loads shaders from the absolute build path recorded by CMake, so it can be launched from another working directory. Reconfigure and rebuild if relocating the build tree.
 
 ## Run
@@ -46,6 +48,12 @@ Linux:
 
 ```sh
 ./build/gpu_culling
+```
+
+To select grouped culling with the same scene and drawing path:
+
+```sh
+./build/gpu_culling --grouped
 ```
 
 To select X11/XWayland when available:
@@ -62,6 +70,8 @@ Windows with a Visual Studio multi-configuration build:
 
 Append `--smoke-test` for a short rendering and shutdown check. After GPU work finishes, it reads the final indirect commands and checks every object's visibility and draw parameters against a CPU reference. Normal rendering does not read visibility back to the CPU. This is a correctness check, not a benchmark.
 
+Flags combine in either order, for example `./build/gpu_culling --grouped --smoke-test`. Both modes check against the same individual-sphere CPU reference, so a coarse group rejection must not remove a sphere the individual method would keep.
+
 Run the window-free CPU checks with:
 
 ```sh
@@ -77,10 +87,11 @@ ctest --test-dir build --output-on-failure
 | `src/swapchain.hpp / .cpp` | Swapchain state, images, image views, and cleanup. |
 | `src/frame.hpp / .cpp` | Frame resources, command recording, synchronization, and presentation. |
 | `src/depth.hpp / .cpp` | Depth attachment format, image, memory, view, and cleanup. |
-| `src/culling.hpp / .cpp` | Frustum planes, CPU reference, compute resources, synchronization and smoke-test verification. |
+| `src/culling.hpp / .cpp` | Spatial group/member generation, AABBs, frustum planes, CPU reference, compute resources, synchronization and smoke-test verification. |
 | `src/vulkan_utils.hpp` | Shared Vulkan result-checking helper. |
 | `shaders/floor.vert / .frag` | Camera transformation and procedural checkerboard color. |
 | `shaders/sphere.vert / .frag` | Per-instance translation and simple sphere lighting. |
 | `shaders/cull.comp` | Per-sphere GPU frustum tests and fixed-slot indirect commands. |
-| `tests/culling_test.cpp` | Six-plane boundary, tangent-sphere, perspective and rotated-camera checks. |
+| `shaders/cull_grouped.comp` | Shared group-AABB rejection followed by per-member sphere tests and fixed-slot commands. |
+| `tests/culling_test.cpp` | Six-plane boundaries, tangent spheres/AABBs, camera transforms, group coverage and partial-block checks. |
 | `CMakeLists.txt` | Executable sources, dependencies, shader compilation, and compiler options. |

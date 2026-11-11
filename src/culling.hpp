@@ -8,6 +8,7 @@
 #include <array>
 #include <cstddef>
 #include <span>
+#include <vector>
 
 /*
  * Culling inputs: six inward-facing world-space planes and the shared sphere dimensions.
@@ -19,13 +20,32 @@ struct CullingParameters {
     float radius = 0.0f;
     uint32_t objectCount = 0;
     uint32_t indexCount = 0;
+    uint32_t groupCount = 0;
 };
-static_assert(offsetof(CullingParameters, radius) == 96 && sizeof(CullingParameters) == 108);
+static_assert(offsetof(CullingParameters, radius) == 96 && sizeof(CullingParameters) == 112);
 static_assert(sizeof(glm::vec3) == 12 && sizeof(VkDrawIndexedIndirectCommand) == 20);
 
+// The trailing struct padding matches the std430 array stride used by the grouped shader.
+struct alignas(16) CullingGroup {
+    glm::vec4 minimum{};
+    glm::vec4 maximum{};
+    uint32_t firstMember = 0;
+    uint32_t memberCount = 0;
+};
+static_assert(offsetof(CullingGroup, firstMember) == 32 && sizeof(CullingGroup) == 48);
+
+struct CullingGroups {
+    std::vector<CullingGroup> groups;
+    std::vector<uint32_t> members;
+};
+
+bool createCullingGroups(std::span<const glm::vec3> positions, uint32_t gridSide,
+                          uint32_t groupSide, float radius, CullingGroups& result);
 std::array<glm::vec4, 6> extractFrustumPlanes(const glm::mat4& viewProjection);
 // Test-only CPU reference for smoke/unit checks; normal rendering uses cull.comp instead.
 bool sphereInFrustum(const std::array<glm::vec4, 6>& planes, glm::vec3 centre, float radius);
+// Test-only coarse reference; production group rejection runs on the GPU.
+bool aabbInFrustum(const std::array<glm::vec4, 6>& planes, const CullingGroup& group);
 
 /*
  * Compute resources: own the pipeline and descriptors, and borrow the scene's buffers.
@@ -40,11 +60,13 @@ struct CullingState {
     VkPipeline pipeline = VK_NULL_HANDLE;
     VkBuffer commands = VK_NULL_HANDLE;
     CullingParameters parameters{};
+    bool grouped = false;
 };
 
 void destroyCullingState(VkDevice device, CullingState& culling);
 bool createCullingState(VkDevice device, VkShaderModule shader, VkBuffer positions, VkBuffer commands,
-                        float radius, uint32_t objectCount, uint32_t indexCount, CullingState& culling);
+                        VkBuffer groups, VkBuffer members, float radius, uint32_t objectCount,
+                        uint32_t indexCount, uint32_t groupCount, bool grouped, CullingState& culling);
 void recordCulling(VkCommandBuffer commandBuffer, CullingState& culling, const glm::mat4& viewProjection);
 // Smoke-test only, after device idle; normal rendering does not read commands back to the CPU.
 bool verifyCulling(VkDevice device, VkDeviceMemory commandMemory, const CullingState& culling,
