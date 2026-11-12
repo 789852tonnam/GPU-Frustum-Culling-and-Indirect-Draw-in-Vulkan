@@ -12,7 +12,7 @@ The current version renders a checkerboard floor and a configurable sphere grid 
 - Generates one shared sphere mesh: 16 slices and 8 stacks, giving 114 local-space vertices and 224 triangles with outward winding. Uses a second vertex binding for per-instance positions and simple fixed directional lighting.
 - Extracts six normalized frustum planes from the camera's Vulkan zero-to-one-depth view-projection matrix. A compute shader tests each sphere and rewrites one fixed indirect slot per object, setting `instanceCount` to 0 or 1 and preserving the object ID in `firstInstance`.
 - `--grouped` selects a second compute shader: one workgroup tests each group AABB, then its lanes fine-test members only if the group survives. Rejected groups still clear every member's command slot. The default remains per-object testing.
-- Builds static groups from 4 × 4 spatial grid blocks (25 groups in the default scene), including partial edge blocks and full sphere radii in each AABB. An explicit member list preserves original object IDs without sorting or moving position data. `sphereGroupSide` in `src/main.cpp` is the initial experiment setting, not a measured optimum.
+- Builds static groups from spatial grid blocks (4 × 4 by default, giving 25 groups in the default scene), including partial edge blocks and full sphere radii in each AABB. `--group-level L` doubles the block side with each level. An explicit member list preserves original object IDs without sorting or moving position data; the default group size is not a measured optimum.
 - Synchronizes compute writes before `vkCmdDrawIndexedIndirect` consumes one slot per sphere. Both modes keep the same draw path and scene; there is no compaction or occlusion culling. The floor is drawn directly.
 - Uploads floor/sphere vertices, indices and sphere positions into host-visible buffer memory through a shared create/allocate/upload helper. Sends the camera's view-projection matrix through push constants.
 - Uses a depth attachment for correct opaque visibility, clears it every frame and recreates it with the swapchain size. Selects a supported depth-only format (D32 float preferred, D16 fallback).
@@ -44,6 +44,8 @@ cmake --build build --config Debug
 The build compiles the floor/sphere vertex/fragment shaders and both culling compute shaders into SPIR-V files in `build/shaders/`.
 The executable loads shaders from the absolute build path recorded by CMake, so it can be launched from another working directory. Reconfigure and rebuild if relocating the build tree.
 
+Clean-source verification (12 November 2026): a new Release build from Git-visible working-tree files, with no existing build directory/cache, passed the renderer build, all three CTests, the optional `experiment_tools` build and evidence verification. Both per-object/grouped GPU smoke tests also passed with validation when launched from `/tmp`, using the new build's shaders. This was checked on Fedora 44/Radeon 860M with system-installed development packages; Windows and dependency-fetch fallback were not revalidated.
+
 ## Run
 
 Linux:
@@ -65,7 +67,17 @@ To draw a 40 × 40 grid (1,600 spheres) without rebuilding:
 ./build/gpu_culling --grid-side 40 --grouped
 ```
 
-`--grid-side` accepts an integer from 1 to 65535; the actual maximum depends on GPU limits and available memory. Omitting it keeps 20 × 20. Spacing, radius, camera, 4 × 4 groups and the 20-metre floor stay fixed, so larger grids extend beyond the floor and can extend beyond the camera's 100-metre far plane.
+`--grid-side` accepts an integer from 1 to 65535; the actual maximum depends on GPU limits and available memory. Omitting it keeps 20 × 20. Spacing, radius, camera and the 20-metre floor stay fixed, so larger grids extend beyond the floor and can extend beyond the camera's 100-metre far plane.
+
+To use larger groups while keeping the same spheres:
+
+```sh
+./build/gpu_culling --grid-side 40 --grouped --group-level 2
+```
+
+`--group-level` defaults to 1 and accepts 1–15. Each group spans up to `4 × 2^(L-1)` rows and columns: level 1 = 4 × 4, level 2 = 8 × 8, level 3 = 16 × 16, and level 7 = 256 × 256. Level 15 spans every supported grid. A block larger than the grid produces one group. Bounds are recomputed from the actual members, including sphere radii; the spheres stay in place. Use `--grouped` to enable group tests; per-object mode ignores group bounds.
+
+Larger groups can reduce parallelism and require more member tests when a coarse box survives, so increasing the level does not guarantee a speedup.
 
 To select X11/XWayland when available:
 
@@ -95,7 +107,17 @@ Four `vkCmdWriteTimestamp2` queries use TOP/BOTTOM stages: cull start, cull end,
 
 These are approximate GPU elapsed intervals, not isolated shader execution costs. Pipeline work can overlap, so **do not add cull + draw to obtain total**. Results are converted using the device's nanoseconds-per-tick and the queue's valid timestamp bits, including one counter wrap. The final submitted sample is collected before resize/shutdown releases its query pool.
 
-This is timing instrumentation, not a benchmark protocol: FIFO/vsync is unchanged, no warm-up samples are discarded, and there is no CSV export or controlled statistical comparison yet.
+Normal preview logging does not discard warm-up or export CSV. The separate [experiment package](experiments/README.md) contains the controlled protocol, frozen results, raw clock/log evidence and opt-in reproduction tools.
+
+## Recorded experiments
+
+The selected [primary results](experiments/level-search/recorded/result.md) cover a fresh per-count group-level search: 42 screening runs and 64 independent confirmation runs on Radeon 860M/RADV. Fixed-L3 count studies and two verified RenderDoc captures are retained separately in `experiments/`.
+
+Run `python3 experiments/verify_evidence.py` to check the archived files, clock/oracle records and statistics without a GPU. See [experiments/README.md](experiments/README.md) for the folder inventory, measured machine, limitations and commands for rebuilding/rerunning the tools. New runs go under `build/` and do not overwrite the recorded data.
+
+## License and AI assistance
+
+Original project code and documentation use the [MIT License](LICENSE). Upstream material retains its own terms; see [third-party notices and research credits](THIRD_PARTY_NOTICES.md). The [AI-use log](AI_USE.md) records contribution roles, assistance and verification, with design decisions and analysis attributed to the project author.
 
 ## Source layout
 
@@ -115,5 +137,5 @@ This is timing instrumentation, not a benchmark protocol: FIFO/vsync is unchange
 | `shaders/cull_grouped.comp` | Shared group-AABB rejection followed by per-member sphere tests and fixed-slot commands. |
 | `tests/culling_test.cpp` | Six-plane boundaries, tangent spheres/AABBs, camera transforms, group coverage and partial-block checks. |
 | `tests/timing_test.cpp` | Timestamp period conversion, valid-bit masks, wraparound and overlapping intervals. |
-| `tests/grid_arguments_test.cmake` | Reject invalid or missing grid dimensions before window creation. |
+| `tests/grid_arguments_test.cmake` | Reject invalid or missing grid dimensions and group levels before window creation. |
 | `CMakeLists.txt` | Executable sources, dependencies, shader compilation, and compiler options. |

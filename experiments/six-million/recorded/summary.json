@@ -1,0 +1,74 @@
+[
+  {
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "runs": 4,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 5.387315,
+      "minimum": 5.16309,
+      "maximum": 5.5983,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 97.27905,
+      "minimum": 90.2414,
+      "maximum": 107.872
+    },
+    "total_ms": {
+      "median": 102.65950000000001,
+      "minimum": 95.651,
+      "maximum": 113.237,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "runs": 4,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 4.83312,
+      "minimum": 4.77545,
+      "maximum": 4.95142,
+      "reduction_percent": 10.28703537847704,
+      "paired_reduction_percent": [
+        9.61525664344972,
+        10.964455272247376,
+        7.507907086647725,
+        11.55493631995428
+      ]
+    },
+    "draw_ms": {
+      "median": 101.91355,
+      "minimum": 95.6172,
+      "maximum": 108.658
+    },
+    "total_ms": {
+      "median": 106.7765,
+      "minimum": 100.507,
+      "maximum": 113.435,
+      "reduction_percent": -4.010344877970362,
+      "paired_reduction_percent": [
+        -5.076789578781193,
+        -0.17485450868532926,
+        -7.753527899354284,
+        -0.3219973505323104
+      ]
+    }
+  }
+]

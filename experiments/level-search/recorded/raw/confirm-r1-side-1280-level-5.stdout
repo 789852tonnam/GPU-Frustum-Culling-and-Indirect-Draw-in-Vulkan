@@ -1,0 +1,81 @@
+GLFW window created (960x540). Press Escape or close the window to exit.
+Vulkan instance created (requested API 1.3).
+Vulkan window surface created.
+Vulkan physical devices: 2
+  Name: AMD Radeon 860M Graphics (RADV KRACKAN1)
+  Type: Integrated GPU
+  Vulkan API: 1.4.354
+  Queue families: 5
+    Family 0 | Queues: 1 | Graphics: Yes | Compute: Yes | Present: Yes | Timestamp bits: 64
+      Transfer: Yes | Sparse binding: Yes | Video decode: No | Video encode: No
+    Family 1 | Queues: 4 | Graphics: No | Compute: Yes | Present: Yes | Timestamp bits: 64
+      Transfer: Yes | Sparse binding: Yes | Video decode: No | Video encode: No
+    Family 2 | Queues: 1 | Graphics: No | Compute: No | Present: No | Timestamp bits: 0
+      Transfer: No | Sparse binding: No | Video decode: Yes | Video encode: No
+    Family 3 | Queues: 1 | Graphics: No | Compute: No | Present: No | Timestamp bits: 0
+      Transfer: No | Sparse binding: No | Video decode: No | Video encode: Yes
+    Family 4 | Queues: 1 | Graphics: No | Compute: No | Present: No | Timestamp bits: 0
+      Transfer: No | Sparse binding: Yes | Video decode: No | Video encode: No
+  Dynamic rendering: Yes | Synchronization2: Yes
+  Swapchain: Yes | Surface formats: 81 | Present modes: 3
+  Eligible | Unified family: 0 | Device-type priority: 2
+
+  Name: llvmpipe (LLVM 22.1.8, 256 bits)
+  Type: CPU (software implementation)
+  Vulkan API: 1.4.354
+  Queue families: 1
+    Family 0 | Queues: 1 | Graphics: Yes | Compute: Yes | Present: Yes | Timestamp bits: 64
+      Transfer: Yes | Sparse binding: Yes | Video decode: No | Video encode: No
+  Skip: CPU software rendering is excluded from GPU selection.
+
+Selected GPU: AMD Radeon 860M Graphics (RADV KRACKAN1)
+Selected queue family: 0 (graphics + compute + present)
+Preference: discrete > integrated > virtual > other; ties keep the first eligible device.
+GPU timestamp period: 10.019 ns/tick, 64 valid bits.
+Scene data prepared on CPU: floor 20 x 20 m, 4 vertices, 6 indices.
+Sphere positions prepared on CPU: 1638400 spheres (1280x1280), radius 0.25 m, center spacing 1 m.
+Sphere geometry prepared on CPU: 114 vertices, 672 indices (224 triangles).
+Culling mode: grouped; group level 5; 400 groups of up to 64x64 spheres, with full-sphere AABBs.
+Camera position: (0, 2, 0), yaw 0, pitch -20 degrees.
+Logical device created; dynamicRendering, synchronization2, indirect draw features, and VK_KHR_swapchain enabled.
+Queue acquired: family 0, queue index 0.
+Swapchain created: 1536x864 | Images: 4 | Format enum: 50 | Color-space enum: 0 | Present mode: FIFO
+Swapchain image views created: 4
+Depth attachment created: 1536x864.
+Geometry memory bound: 48 bytes, memory type 2.
+Geometry memory bound: 16 bytes, memory type 2.
+Geometry memory bound: 1376 bytes, memory type 2.
+Geometry memory bound: 1344 bytes, memory type 2.
+Geometry memory bound: 19660800 bytes, memory type 2.
+Geometry memory bound: 32768000 bytes, memory type 2.
+Geometry memory bound: 19200 bytes, memory type 2.
+Geometry memory bound: 6553600 bytes, memory type 2.
+Shader module created: "/home/tonumi/Desktop/CGTermProject/gpu-culling-vulkan/build/shaders/floor.vert.spv"
+Shader module created: "/home/tonumi/Desktop/CGTermProject/gpu-culling-vulkan/build/shaders/floor.frag.spv"
+Shader module created: "/home/tonumi/Desktop/CGTermProject/gpu-culling-vulkan/build/shaders/sphere.vert.spv"
+Shader module created: "/home/tonumi/Desktop/CGTermProject/gpu-culling-vulkan/build/shaders/sphere.frag.spv"
+Shader module created: "/home/tonumi/Desktop/CGTermProject/gpu-culling-vulkan/build/shaders/cull_grouped.comp.spv"
+Graphics pipeline created for format 50.
+Graphics pipeline created for format 50.
+Frame resources created: one command buffer/fence, one frame in flight.
+Geometry buffers ready: vertex 48 bytes, index 12 bytes; ready to draw.
+Sphere buffers uploaded: one shared mesh, 1638400 instances; GPU frustum culling with fixed-slot indirect drawing.
+First sphere-grid frame submitted for presentation.
+GPU timestamps [grouped 1536x864, 119 samples]: cull=1.32133 ms draw=19.316 ms total=20.6371 ms
+BENCHMARK_WARMUP_DONE frames=234 seconds=5.01435
+GPU timestamps [grouped 1536x864, 5 samples]: cull=1.79513 ms draw=24.8901 ms total=26.6849 ms
+GPU timestamps [grouped 1536x864, 125 samples]: cull=1.58349 ms draw=20.9645 ms total=22.5477 ms
+GPU timestamps [grouped 1536x864, 180 samples]: cull=1.63703 ms draw=21.2558 ms total=22.8926 ms
+GPU grouped culling verified: 11053/1638400 visible; all commands match CPU reference.
+CLOCK_MONITOR samples=40 min=2000 max=2000 MHz
+Frames submitted for presentation: 414
+Swapchain recreations: 0
+Frame resources destroyed.
+Graphics pipeline and layout destroyed.
+Shader modules destroyed.
+Geometry buffers destroyed; memory freed.
+Swapchain image views and swapchain destroyed.
+Logical device destroyed; its queue is released with it.
+Vulkan window surface destroyed.
+Vulkan instance destroyed.
+Window closed; GLFW shut down.

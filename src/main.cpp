@@ -41,7 +41,6 @@ const std::array<glm::vec3, 4> floorVertices{{
 // Each group of three indices selects one triangle from those corners.
 constexpr std::array<std::uint16_t, 6> floorIndices{0, 2, 1, 0, 3, 2};
 
-constexpr uint32_t sphereGroupSide = 4;
 constexpr float sphereRadius = 0.25f;
 constexpr float sphereSpacing = 1.0f;
 
@@ -558,26 +557,30 @@ int main(int argc, char** argv) {
     bool smokeTest = false;
     bool grouped = false;
     uint32_t sphereGridSide = 20;
+    uint32_t groupLevel = 1;
     for (int index = 1; index < argc; ++index) {
         const std::string_view argument(argv[index]);
         if (argument == "--smoke-test") {
             smokeTest = true;
         } else if (argument == "--grouped") {
             grouped = true;
-        } else if (argument == "--grid-side") {
+        } else if (argument == "--grid-side" || argument == "--group-level") {
+            uint32_t& destination = argument == "--grid-side" ? sphereGridSide : groupLevel;
+            const uint32_t maximum = argument == "--grid-side" ? 65535 : 15;
             const std::string_view value = index + 1 < argc ? argv[++index] : "";
-            const auto parsed = std::from_chars(value.data(), value.data() + value.size(), sphereGridSide);
-            // Keep the square and original object IDs representable as uint32_t.
+            const auto parsed = std::from_chars(value.data(), value.data() + value.size(), destination);
             if (parsed.ec != std::errc{} || parsed.ptr != value.data() + value.size() ||
-                sphereGridSide == 0 || sphereGridSide > 65535) {
-                std::cerr << "Invalid --grid-side: expected an integer from 1 to 65535.\n";
+                destination == 0 || destination > maximum) {
+                std::cerr << "Invalid " << argument << ": expected an integer from 1 to " << maximum << ".\n";
                 return EXIT_FAILURE;
             }
         } else {
-            std::cerr << "Usage: gpu_culling [--smoke-test] [--grouped] [--grid-side N]\n";
+            std::cerr << "Usage: gpu_culling [--smoke-test] [--grouped] [--grid-side N] [--group-level L]\n";
             return EXIT_FAILURE;
         }
     }
+    // Level 15 already spans every supported grid; input limits keep shifts and object IDs safe.
+    const uint32_t sphereGroupSide = 4u << (groupLevel - 1);
     const uint32_t sphereCount = sphereGridSide * sphereGridSide;
     CameraState camera{};
     constexpr double cameraRotationPeriod = 10.0;
@@ -728,7 +731,7 @@ int main(int argc, char** argv) {
               << "Sphere geometry prepared on CPU: " << sphereGeometry.vertices.size()
               << " vertices, " << sphereGeometry.indices.size() << " indices ("
               << sphereGeometry.indices.size() / 3 << " triangles).\n"
-              << "Culling mode: " << (grouped ? "grouped" : "per-object") << "; "
+              << "Culling mode: " << (grouped ? "grouped" : "per-object") << "; group level " << groupLevel << "; "
               << sphereGroups.groups.size() << " groups of up to " << sphereGroupSide << 'x'
               << sphereGroupSide << " spheres, with full-sphere AABBs.\n"
               << "Camera position: (" << camera.position.x << ", " << camera.position.y

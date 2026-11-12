@@ -1,0 +1,44 @@
+[
+  {
+    "mode": "per-object",
+    "dispatchEvent": 11,
+    "dispatch": [
+      100,
+      1,
+      1
+    ],
+    "totalCommands": 6400,
+    "visible": 1623,
+    "rejected": 4777,
+    "commandsSha256": "ba352e3346adf6ee8c46bf34d6e6c7d94f9c55bbb6a3a0def29d21ad66e542e3",
+    "drawActions": 6401,
+    "indirectActions": 6400,
+    "recordedCalls": {
+      "vkCmdDispatch": 1,
+      "vkCmdPipelineBarrier2": 4,
+      "vkCmdDrawIndexedIndirect": 1
+    },
+    "messages": []
+  },
+  {
+    "mode": "grouped",
+    "dispatchEvent": 11,
+    "dispatch": [
+      25,
+      1,
+      1
+    ],
+    "totalCommands": 6400,
+    "visible": 1623,
+    "rejected": 4777,
+    "commandsSha256": "ba352e3346adf6ee8c46bf34d6e6c7d94f9c55bbb6a3a0def29d21ad66e542e3",
+    "drawActions": 6401,
+    "indirectActions": 6400,
+    "recordedCalls": {
+      "vkCmdDispatch": 1,
+      "vkCmdPipelineBarrier2": 4,
+      "vkCmdDrawIndexedIndirect": 1
+    },
+    "messages": []
+  }
+]

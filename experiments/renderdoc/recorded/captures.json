@@ -1,0 +1,12 @@
+[
+  {
+    "mode": "per-object",
+    "path": "/home/tonumi/Desktop/CGTermProject/docs/verification/renderdoc-captures/per-object_capture.rdc",
+    "bytes": 1118492
+  },
+  {
+    "mode": "grouped",
+    "path": "/home/tonumi/Desktop/CGTermProject/docs/verification/renderdoc-captures/grouped_capture.rdc",
+    "bytes": 1114116
+  }
+]

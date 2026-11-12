@@ -1,0 +1,5 @@
+# Preserve checksum-addressed evidence, including its original whitespace.
+experiments/*/recorded/** -text whitespace=-blank-at-eol
+# Keep upstream notices byte-for-byte as distributed.
+licenses/* -text
+licenses/GLFW-LICENSE.md whitespace=-blank-at-eof

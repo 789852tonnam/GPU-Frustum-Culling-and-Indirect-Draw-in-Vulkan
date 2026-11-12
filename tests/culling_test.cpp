@@ -63,7 +63,7 @@ int main() {
                 positions.emplace_back(static_cast<float>(column) - 2, 0.25f, static_cast<float>(row) - 2);
             }
         }
-        for (uint32_t groupSide : {1u, 2u, 4u, 8u, 32u}) {
+        for (uint32_t groupSide : {1u, 2u, 4u, 8u, 16u, 32u, 65536u}) {
             CullingGroups result;
             assert(createCullingGroups(positions, gridSide, groupSide, 0.25f, result));
             const uint32_t blocks = (gridSide + groupSide - 1) / groupSide;

@@ -82,6 +82,9 @@ endforeach()
 add_custom_target(gpu_culling_shaders DEPENDS ${SHADER_BINARIES})
 add_dependencies(gpu_culling gpu_culling_shaders)
 
+# Experiment executables are opt-in targets and reuse this build's renderer and dependencies.
+add_subdirectory(experiments)
+
 # Compiler diagnostics: enable the normal warning level for the active compiler family.
 # Keep these options local to the application target instead of imposing them on dependencies.
 # Platform-specific choices here affect build diagnostics rather than rendering behavior.

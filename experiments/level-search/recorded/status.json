@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "target_mhz": 2000,
+  "power_before": {
+    "ac": "1",
+    "battery": "94",
+    "policy": "auto"
+  },
+  "completed_runs": 106,
+  "guard_exit": 0,
+  "final_mode": "auto",
+  "final_limits": "OD_SCLK:\n0:        600Mhz\n1:       3000Mhz\nOD_RANGE:\nSCLK:     600Mhz       3000Mhz"
+}

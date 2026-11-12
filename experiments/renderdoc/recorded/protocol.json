@@ -1,0 +1,26 @@
+{
+  "gridSide": 80,
+  "sphereCount": 6400,
+  "groupLevel": 3,
+  "groupSide": 16,
+  "yawDegrees": 35,
+  "capturedFrame": 3,
+  "frames": 4,
+  "modes": [
+    "per-object",
+    "grouped"
+  ],
+  "purpose": "Correctness inspection only; capture timing is excluded from performance results.",
+  "productionSourceSha256": "b5f706144ad8cfe1636baeeb0451cc7355cf13533b69b72829def664beb5d41f",
+  "resolution": [
+    960,
+    540
+  ],
+  "windowSystem": "X11 via process-local XDG_SESSION_TYPE, desktop unchanged",
+  "tool": "RenderDoc1.45 Fedora44 package",
+  "toolPackage": "https://mirror.freedif.org/fedora/fedora/linux/updates/44/Everything/x86_64/Packages/r/renderdoc-1.45-1.fc44.x86_64.rpm",
+  "toolPackageSha256": "fe827c895ba8e59e0e6b1f05d9b4a74847dc5f62bdb274f7ac54975453232986",
+  "packageVerification": "rpmkeys: digests signatures OK",
+  "validation": "Khronos validation and sync validation requested for capture runs; performance runs excluded validation.",
+  "layerRegistration": "Process-local paths avoid the stale existing RenderDoc user registration; no user/system registration changed."
+}

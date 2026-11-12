@@ -1,0 +1,1896 @@
+[
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 0,
+    "runs": 1,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 0.102377,
+      "minimum": 0.102377,
+      "maximum": 0.102377,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 2.69518,
+      "minimum": 2.69518,
+      "maximum": 2.69518
+    },
+    "total_ms": {
+      "median": 2.79731,
+      "minimum": 2.79731,
+      "maximum": 2.79731,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 1,
+    "runs": 1,
+    "groupSide": 4,
+    "cull_ms": {
+      "median": 0.113434,
+      "minimum": 0.113434,
+      "maximum": 0.113434,
+      "reduction_percent": -10.800277406058001,
+      "paired_reduction_percent": [
+        -10.800277406058001
+      ]
+    },
+    "draw_ms": {
+      "median": 2.70226,
+      "minimum": 2.70226,
+      "maximum": 2.70226
+    },
+    "total_ms": {
+      "median": 2.81544,
+      "minimum": 2.81544,
+      "maximum": 2.81544,
+      "reduction_percent": -0.6481226606990464,
+      "paired_reduction_percent": [
+        -0.6481226606990464
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 2,
+    "runs": 1,
+    "groupSide": 8,
+    "cull_ms": {
+      "median": 0.114534,
+      "minimum": 0.114534,
+      "maximum": 0.114534,
+      "reduction_percent": -11.874737489865893,
+      "paired_reduction_percent": [
+        -11.874737489865893
+      ]
+    },
+    "draw_ms": {
+      "median": 2.77044,
+      "minimum": 2.77044,
+      "maximum": 2.77044
+    },
+    "total_ms": {
+      "median": 2.88472,
+      "minimum": 2.88472,
+      "maximum": 2.88472,
+      "reduction_percent": -3.1247877425097714,
+      "paired_reduction_percent": [
+        -3.1247877425097714
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 3,
+    "runs": 1,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 0.158532,
+      "minimum": 0.158532,
+      "maximum": 0.158532,
+      "reduction_percent": -54.85118727839262,
+      "paired_reduction_percent": [
+        -54.85118727839262
+      ]
+    },
+    "draw_ms": {
+      "median": 2.81103,
+      "minimum": 2.81103,
+      "maximum": 2.81103
+    },
+    "total_ms": {
+      "median": 2.96931,
+      "minimum": 2.96931,
+      "maximum": 2.96931,
+      "reduction_percent": -6.148764348606339,
+      "paired_reduction_percent": [
+        -6.148764348606339
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 4,
+    "runs": 1,
+    "groupSide": 32,
+    "cull_ms": {
+      "median": 0.168635,
+      "minimum": 0.168635,
+      "maximum": 0.168635,
+      "reduction_percent": -64.71961475722088,
+      "paired_reduction_percent": [
+        -64.71961475722088
+      ]
+    },
+    "draw_ms": {
+      "median": 2.76289,
+      "minimum": 2.76289,
+      "maximum": 2.76289
+    },
+    "total_ms": {
+      "median": 2.93127,
+      "minimum": 2.93127,
+      "maximum": 2.93127,
+      "reduction_percent": -4.78888646592619,
+      "paired_reduction_percent": [
+        -4.78888646592619
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 5,
+    "runs": 1,
+    "groupSide": 64,
+    "cull_ms": {
+      "median": 0.425836,
+      "minimum": 0.425836,
+      "maximum": 0.425836,
+      "reduction_percent": -315.9488947712865,
+      "paired_reduction_percent": [
+        -315.9488947712865
+      ]
+    },
+    "draw_ms": {
+      "median": 2.77231,
+      "minimum": 2.77231,
+      "maximum": 2.77231
+    },
+    "total_ms": {
+      "median": 3.19789,
+      "minimum": 3.19789,
+      "maximum": 3.19789,
+      "reduction_percent": -14.320186178864702,
+      "paired_reduction_percent": [
+        -14.320186178864702
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 6,
+    "runs": 1,
+    "groupSide": 128,
+    "cull_ms": {
+      "median": 1.26551,
+      "minimum": 1.26551,
+      "maximum": 1.26551,
+      "reduction_percent": -1136.1272551451987,
+      "paired_reduction_percent": [
+        -1136.1272551451987
+      ]
+    },
+    "draw_ms": {
+      "median": 2.78512,
+      "minimum": 2.78512,
+      "maximum": 2.78512
+    },
+    "total_ms": {
+      "median": 4.05038,
+      "minimum": 4.05038,
+      "maximum": 4.05038,
+      "reduction_percent": -44.79553571109387,
+      "paired_reduction_percent": [
+        -44.79553571109387
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 7,
+    "runs": 1,
+    "groupSide": 256,
+    "cull_ms": {
+      "median": 3.62484,
+      "minimum": 3.62484,
+      "maximum": 3.62484,
+      "reduction_percent": -3440.6780819910723,
+      "paired_reduction_percent": [
+        -3440.6780819910723
+      ]
+    },
+    "draw_ms": {
+      "median": 2.86481,
+      "minimum": 2.86481,
+      "maximum": 2.86481
+    },
+    "total_ms": {
+      "median": 6.4894,
+      "minimum": 6.4894,
+      "maximum": 6.4894,
+      "reduction_percent": -131.98715909212777,
+      "paired_reduction_percent": [
+        -131.98715909212777
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 8,
+    "runs": 1,
+    "groupSide": 512,
+    "cull_ms": {
+      "median": 5.22658,
+      "minimum": 5.22658,
+      "maximum": 5.22658,
+      "reduction_percent": -5005.228713480567,
+      "paired_reduction_percent": [
+        -5005.228713480567
+      ]
+    },
+    "draw_ms": {
+      "median": 2.70507,
+      "minimum": 2.70507,
+      "maximum": 2.70507
+    },
+    "total_ms": {
+      "median": 7.9314,
+      "minimum": 7.9314,
+      "maximum": 7.9314,
+      "reduction_percent": -183.5366834566065,
+      "paired_reduction_percent": [
+        -183.5366834566065
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 0,
+    "runs": 1,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 0.419302,
+      "minimum": 0.419302,
+      "maximum": 0.419302,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 5.38575,
+      "minimum": 5.38575,
+      "maximum": 5.38575
+    },
+    "total_ms": {
+      "median": 5.8048,
+      "minimum": 5.8048,
+      "maximum": 5.8048,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 1,
+    "runs": 1,
+    "groupSide": 4,
+    "cull_ms": {
+      "median": 0.46143,
+      "minimum": 0.46143,
+      "maximum": 0.46143,
+      "reduction_percent": -10.047173636185857,
+      "paired_reduction_percent": [
+        -10.047173636185857
+      ]
+    },
+    "draw_ms": {
+      "median": 5.43934,
+      "minimum": 5.43934,
+      "maximum": 5.43934
+    },
+    "total_ms": {
+      "median": 5.90052,
+      "minimum": 5.90052,
+      "maximum": 5.90052,
+      "reduction_percent": -1.6489801543550175,
+      "paired_reduction_percent": [
+        -1.6489801543550175
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 2,
+    "runs": 1,
+    "groupSide": 8,
+    "cull_ms": {
+      "median": 0.36318,
+      "minimum": 0.36318,
+      "maximum": 0.36318,
+      "reduction_percent": 13.38462492427892,
+      "paired_reduction_percent": [
+        13.38462492427892
+      ]
+    },
+    "draw_ms": {
+      "median": 5.7183,
+      "minimum": 5.7183,
+      "maximum": 5.7183
+    },
+    "total_ms": {
+      "median": 6.08123,
+      "minimum": 6.08123,
+      "maximum": 6.08123,
+      "reduction_percent": -4.762093439911785,
+      "paired_reduction_percent": [
+        -4.762093439911785
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 3,
+    "runs": 1,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 0.40571,
+      "minimum": 0.40571,
+      "maximum": 0.40571,
+      "reduction_percent": 3.2415776695555953,
+      "paired_reduction_percent": [
+        3.2415776695555953
+      ]
+    },
+    "draw_ms": {
+      "median": 5.86513,
+      "minimum": 5.86513,
+      "maximum": 5.86513
+    },
+    "total_ms": {
+      "median": 6.27059,
+      "minimum": 6.27059,
+      "maximum": 6.27059,
+      "reduction_percent": -8.024221334068349,
+      "paired_reduction_percent": [
+        -8.024221334068349
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 4,
+    "runs": 1,
+    "groupSide": 32,
+    "cull_ms": {
+      "median": 0.442192,
+      "minimum": 0.442192,
+      "maximum": 0.442192,
+      "reduction_percent": -5.45907245851438,
+      "paired_reduction_percent": [
+        -5.45907245851438
+      ]
+    },
+    "draw_ms": {
+      "median": 5.23615,
+      "minimum": 5.23615,
+      "maximum": 5.23615
+    },
+    "total_ms": {
+      "median": 5.67808,
+      "minimum": 5.67808,
+      "maximum": 5.67808,
+      "reduction_percent": 2.183020948180825,
+      "paired_reduction_percent": [
+        2.183020948180825
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 5,
+    "runs": 1,
+    "groupSide": 64,
+    "cull_ms": {
+      "median": 0.625552,
+      "minimum": 0.625552,
+      "maximum": 0.625552,
+      "reduction_percent": -49.188890107845886,
+      "paired_reduction_percent": [
+        -49.188890107845886
+      ]
+    },
+    "draw_ms": {
+      "median": 5.5186,
+      "minimum": 5.5186,
+      "maximum": 5.5186
+    },
+    "total_ms": {
+      "median": 6.1439,
+      "minimum": 6.1439,
+      "maximum": 6.1439,
+      "reduction_percent": -5.841717199558993,
+      "paired_reduction_percent": [
+        -5.841717199558993
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 6,
+    "runs": 1,
+    "groupSide": 128,
+    "cull_ms": {
+      "median": 1.27105,
+      "minimum": 1.27105,
+      "maximum": 1.27105,
+      "reduction_percent": -203.13473343795164,
+      "paired_reduction_percent": [
+        -203.13473343795164
+      ]
+    },
+    "draw_ms": {
+      "median": 5.71592,
+      "minimum": 5.71592,
+      "maximum": 5.71592
+    },
+    "total_ms": {
+      "median": 6.98672,
+      "minimum": 6.98672,
+      "maximum": 6.98672,
+      "reduction_percent": -20.361080485115757,
+      "paired_reduction_percent": [
+        -20.361080485115757
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 7,
+    "runs": 1,
+    "groupSide": 256,
+    "cull_ms": {
+      "median": 4.90852,
+      "minimum": 4.90852,
+      "maximum": 4.90852,
+      "reduction_percent": -1070.6407315013998,
+      "paired_reduction_percent": [
+        -1070.6407315013998
+      ]
+    },
+    "draw_ms": {
+      "median": 6.25738,
+      "minimum": 6.25738,
+      "maximum": 6.25738
+    },
+    "total_ms": {
+      "median": 11.1656,
+      "minimum": 11.1656,
+      "maximum": 11.1656,
+      "reduction_percent": -92.35115766262403,
+      "paired_reduction_percent": [
+        -92.35115766262403
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 8,
+    "runs": 1,
+    "groupSide": 512,
+    "cull_ms": {
+      "median": 14.8234,
+      "minimum": 14.8234,
+      "maximum": 14.8234,
+      "reduction_percent": -3435.2562115134197,
+      "paired_reduction_percent": [
+        -3435.2562115134197
+      ]
+    },
+    "draw_ms": {
+      "median": 5.82376,
+      "minimum": 5.82376,
+      "maximum": 5.82376
+    },
+    "total_ms": {
+      "median": 20.6469,
+      "minimum": 20.6469,
+      "maximum": 20.6469,
+      "reduction_percent": -255.68667309812568,
+      "paired_reduction_percent": [
+        -255.68667309812568
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 9,
+    "runs": 1,
+    "groupSide": 1024,
+    "cull_ms": {
+      "median": 23.3904,
+      "minimum": 23.3904,
+      "maximum": 23.3904,
+      "reduction_percent": -5478.413649350587,
+      "paired_reduction_percent": [
+        -5478.413649350587
+      ]
+    },
+    "draw_ms": {
+      "median": 6.33665,
+      "minimum": 6.33665,
+      "maximum": 6.33665
+    },
+    "total_ms": {
+      "median": 29.7268,
+      "minimum": 29.7268,
+      "maximum": 29.7268,
+      "reduction_percent": -412.10722160970226,
+      "paired_reduction_percent": [
+        -412.10722160970226
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 0,
+    "runs": 1,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 1.85564,
+      "minimum": 1.85564,
+      "maximum": 1.85564,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 21.0524,
+      "minimum": 21.0524,
+      "maximum": 21.0524
+    },
+    "total_ms": {
+      "median": 22.9078,
+      "minimum": 22.9078,
+      "maximum": 22.9078,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 1,
+    "runs": 1,
+    "groupSide": 4,
+    "cull_ms": {
+      "median": 2.04466,
+      "minimum": 2.04466,
+      "maximum": 2.04466,
+      "reduction_percent": -10.186243021275686,
+      "paired_reduction_percent": [
+        -10.186243021275686
+      ]
+    },
+    "draw_ms": {
+      "median": 19.1179,
+      "minimum": 19.1179,
+      "maximum": 19.1179
+    },
+    "total_ms": {
+      "median": 21.1623,
+      "minimum": 21.1623,
+      "maximum": 21.1623,
+      "reduction_percent": 7.619675394407155,
+      "paired_reduction_percent": [
+        7.619675394407155
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 2,
+    "runs": 1,
+    "groupSide": 8,
+    "cull_ms": {
+      "median": 1.5433,
+      "minimum": 1.5433,
+      "maximum": 1.5433,
+      "reduction_percent": 16.83192860684185,
+      "paired_reduction_percent": [
+        16.83192860684185
+      ]
+    },
+    "draw_ms": {
+      "median": 23.1293,
+      "minimum": 23.1293,
+      "maximum": 23.1293
+    },
+    "total_ms": {
+      "median": 24.6723,
+      "minimum": 24.6723,
+      "maximum": 24.6723,
+      "reduction_percent": -7.70261657601341,
+      "paired_reduction_percent": [
+        -7.70261657601341
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 3,
+    "runs": 1,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 1.52968,
+      "minimum": 1.52968,
+      "maximum": 1.52968,
+      "reduction_percent": 17.565907180272035,
+      "paired_reduction_percent": [
+        17.565907180272035
+      ]
+    },
+    "draw_ms": {
+      "median": 21.1487,
+      "minimum": 21.1487,
+      "maximum": 21.1487
+    },
+    "total_ms": {
+      "median": 22.6782,
+      "minimum": 22.6782,
+      "maximum": 22.6782,
+      "reduction_percent": 1.0022786998315047,
+      "paired_reduction_percent": [
+        1.0022786998315047
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 4,
+    "runs": 1,
+    "groupSide": 32,
+    "cull_ms": {
+      "median": 1.64327,
+      "minimum": 1.64327,
+      "maximum": 1.64327,
+      "reduction_percent": 11.44456898967472,
+      "paired_reduction_percent": [
+        11.44456898967472
+      ]
+    },
+    "draw_ms": {
+      "median": 23.9299,
+      "minimum": 23.9299,
+      "maximum": 23.9299
+    },
+    "total_ms": {
+      "median": 25.5729,
+      "minimum": 25.5729,
+      "maximum": 25.5729,
+      "reduction_percent": -11.634028584150368,
+      "paired_reduction_percent": [
+        -11.634028584150368
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 5,
+    "runs": 1,
+    "groupSide": 64,
+    "cull_ms": {
+      "median": 1.48977,
+      "minimum": 1.48977,
+      "maximum": 1.48977,
+      "reduction_percent": 19.716647625617036,
+      "paired_reduction_percent": [
+        19.716647625617036
+      ]
+    },
+    "draw_ms": {
+      "median": 19.2948,
+      "minimum": 19.2948,
+      "maximum": 19.2948
+    },
+    "total_ms": {
+      "median": 20.7844,
+      "minimum": 20.7844,
+      "maximum": 20.7844,
+      "reduction_percent": 9.269331843302286,
+      "paired_reduction_percent": [
+        9.269331843302286
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 6,
+    "runs": 1,
+    "groupSide": 128,
+    "cull_ms": {
+      "median": 2.27997,
+      "minimum": 2.27997,
+      "maximum": 2.27997,
+      "reduction_percent": -22.86704317647821,
+      "paired_reduction_percent": [
+        -22.86704317647821
+      ]
+    },
+    "draw_ms": {
+      "median": 21.3538,
+      "minimum": 21.3538,
+      "maximum": 21.3538
+    },
+    "total_ms": {
+      "median": 23.6336,
+      "minimum": 23.6336,
+      "maximum": 23.6336,
+      "reduction_percent": -3.1683531373593254,
+      "paired_reduction_percent": [
+        -3.1683531373593254
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 7,
+    "runs": 1,
+    "groupSide": 256,
+    "cull_ms": {
+      "median": 5.03102,
+      "minimum": 5.03102,
+      "maximum": 5.03102,
+      "reduction_percent": -171.1204759543877,
+      "paired_reduction_percent": [
+        -171.1204759543877
+      ]
+    },
+    "draw_ms": {
+      "median": 24.2529,
+      "minimum": 24.2529,
+      "maximum": 24.2529
+    },
+    "total_ms": {
+      "median": 29.2836,
+      "minimum": 29.2836,
+      "maximum": 29.2836,
+      "reduction_percent": -27.832441351853944,
+      "paired_reduction_percent": [
+        -27.832441351853944
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 8,
+    "runs": 1,
+    "groupSide": 512,
+    "cull_ms": {
+      "median": 18.1837,
+      "minimum": 18.1837,
+      "maximum": 18.1837,
+      "reduction_percent": -879.915285292406,
+      "paired_reduction_percent": [
+        -879.915285292406
+      ]
+    },
+    "draw_ms": {
+      "median": 20.0106,
+      "minimum": 20.0106,
+      "maximum": 20.0106
+    },
+    "total_ms": {
+      "median": 38.194,
+      "minimum": 38.194,
+      "maximum": 38.194,
+      "reduction_percent": -66.72923632998366,
+      "paired_reduction_percent": [
+        -66.72923632998366
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 9,
+    "runs": 1,
+    "groupSide": 1024,
+    "cull_ms": {
+      "median": 67.1412,
+      "minimum": 67.1412,
+      "maximum": 67.1412,
+      "reduction_percent": -3518.2233622900994,
+      "paired_reduction_percent": [
+        -3518.2233622900994
+      ]
+    },
+    "draw_ms": {
+      "median": 20.857,
+      "minimum": 20.857,
+      "maximum": 20.857
+    },
+    "total_ms": {
+      "median": 87.9979,
+      "minimum": 87.9979,
+      "maximum": 87.9979,
+      "reduction_percent": -284.13946341420825,
+      "paired_reduction_percent": [
+        -284.13946341420825
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 10,
+    "runs": 1,
+    "groupSide": 2048,
+    "cull_ms": {
+      "median": 94.5864,
+      "minimum": 94.5864,
+      "maximum": 94.5864,
+      "reduction_percent": -4997.238688538725,
+      "paired_reduction_percent": [
+        -4997.238688538725
+      ]
+    },
+    "draw_ms": {
+      "median": 24.8645,
+      "minimum": 24.8645,
+      "maximum": 24.8645
+    },
+    "total_ms": {
+      "median": 119.451,
+      "minimum": 119.451,
+      "maximum": 119.451,
+      "reduction_percent": -421.44247810789335,
+      "paired_reduction_percent": [
+        -421.44247810789335
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "runs": 1,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 6.58085,
+      "minimum": 6.58085,
+      "maximum": 6.58085,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 95.594,
+      "minimum": 95.594,
+      "maximum": 95.594
+    },
+    "total_ms": {
+      "median": 102.175,
+      "minimum": 102.175,
+      "maximum": 102.175,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 1,
+    "runs": 1,
+    "groupSide": 4,
+    "cull_ms": {
+      "median": 6.11929,
+      "minimum": 6.11929,
+      "maximum": 6.11929,
+      "reduction_percent": 7.013683642690527,
+      "paired_reduction_percent": [
+        7.013683642690527
+      ]
+    },
+    "draw_ms": {
+      "median": 107.386,
+      "minimum": 107.386,
+      "maximum": 107.386
+    },
+    "total_ms": {
+      "median": 113.505,
+      "minimum": 113.505,
+      "maximum": 113.505,
+      "reduction_percent": -11.088818204061667,
+      "paired_reduction_percent": [
+        -11.088818204061667
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 2,
+    "runs": 1,
+    "groupSide": 8,
+    "cull_ms": {
+      "median": 5.37506,
+      "minimum": 5.37506,
+      "maximum": 5.37506,
+      "reduction_percent": 18.322709072536213,
+      "paired_reduction_percent": [
+        18.322709072536213
+      ]
+    },
+    "draw_ms": {
+      "median": 83.7006,
+      "minimum": 83.7006,
+      "maximum": 83.7006
+    },
+    "total_ms": {
+      "median": 89.0754,
+      "minimum": 89.0754,
+      "maximum": 89.0754,
+      "reduction_percent": 12.82074871543919,
+      "paired_reduction_percent": [
+        12.82074871543919
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "runs": 1,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 5.03322,
+      "minimum": 5.03322,
+      "maximum": 5.03322,
+      "reduction_percent": 23.51717483303828,
+      "paired_reduction_percent": [
+        23.51717483303828
+      ]
+    },
+    "draw_ms": {
+      "median": 88.9215,
+      "minimum": 88.9215,
+      "maximum": 88.9215
+    },
+    "total_ms": {
+      "median": 93.9545,
+      "minimum": 93.9545,
+      "maximum": 93.9545,
+      "reduction_percent": 8.045510154147294,
+      "paired_reduction_percent": [
+        8.045510154147294
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 4,
+    "runs": 1,
+    "groupSide": 32,
+    "cull_ms": {
+      "median": 6.01104,
+      "minimum": 6.01104,
+      "maximum": 6.01104,
+      "reduction_percent": 8.65860793058647,
+      "paired_reduction_percent": [
+        8.65860793058647
+      ]
+    },
+    "draw_ms": {
+      "median": 102.256,
+      "minimum": 102.256,
+      "maximum": 102.256
+    },
+    "total_ms": {
+      "median": 108.267,
+      "minimum": 108.267,
+      "maximum": 108.267,
+      "reduction_percent": -5.962319549792028,
+      "paired_reduction_percent": [
+        -5.962319549792028
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 5,
+    "runs": 1,
+    "groupSide": 64,
+    "cull_ms": {
+      "median": 5.56204,
+      "minimum": 5.56204,
+      "maximum": 5.56204,
+      "reduction_percent": 15.481434769064794,
+      "paired_reduction_percent": [
+        15.481434769064794
+      ]
+    },
+    "draw_ms": {
+      "median": 103.264,
+      "minimum": 103.264,
+      "maximum": 103.264
+    },
+    "total_ms": {
+      "median": 108.826,
+      "minimum": 108.826,
+      "maximum": 108.826,
+      "reduction_percent": -6.509420112552,
+      "paired_reduction_percent": [
+        -6.509420112552
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 6,
+    "runs": 1,
+    "groupSide": 128,
+    "cull_ms": {
+      "median": 4.59227,
+      "minimum": 4.59227,
+      "maximum": 4.59227,
+      "reduction_percent": 30.217677047797775,
+      "paired_reduction_percent": [
+        30.217677047797775
+      ]
+    },
+    "draw_ms": {
+      "median": 87.7216,
+      "minimum": 87.7216,
+      "maximum": 87.7216
+    },
+    "total_ms": {
+      "median": 92.3136,
+      "minimum": 92.3136,
+      "maximum": 92.3136,
+      "reduction_percent": 9.651480303401028,
+      "paired_reduction_percent": [
+        9.651480303401028
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 7,
+    "runs": 1,
+    "groupSide": 256,
+    "cull_ms": {
+      "median": 7.895,
+      "minimum": 7.895,
+      "maximum": 7.895,
+      "reduction_percent": -19.969304877029572,
+      "paired_reduction_percent": [
+        -19.969304877029572
+      ]
+    },
+    "draw_ms": {
+      "median": 91.0017,
+      "minimum": 91.0017,
+      "maximum": 91.0017
+    },
+    "total_ms": {
+      "median": 98.8965,
+      "minimum": 98.8965,
+      "maximum": 98.8965,
+      "reduction_percent": 3.208710545632487,
+      "paired_reduction_percent": [
+        3.208710545632487
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 8,
+    "runs": 1,
+    "groupSide": 512,
+    "cull_ms": {
+      "median": 14.6653,
+      "minimum": 14.6653,
+      "maximum": 14.6653,
+      "reduction_percent": -122.84811232591535,
+      "paired_reduction_percent": [
+        -122.84811232591535
+      ]
+    },
+    "draw_ms": {
+      "median": 98.2965,
+      "minimum": 98.2965,
+      "maximum": 98.2965
+    },
+    "total_ms": {
+      "median": 112.962,
+      "minimum": 112.962,
+      "maximum": 112.962,
+      "reduction_percent": -10.557377049180339,
+      "paired_reduction_percent": [
+        -10.557377049180339
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 9,
+    "runs": 1,
+    "groupSide": 1024,
+    "cull_ms": {
+      "median": 69.3815,
+      "minimum": 69.3815,
+      "maximum": 69.3815,
+      "reduction_percent": -954.2938982046392,
+      "paired_reduction_percent": [
+        -954.2938982046392
+      ]
+    },
+    "draw_ms": {
+      "median": 103.062,
+      "minimum": 103.062,
+      "maximum": 103.062
+    },
+    "total_ms": {
+      "median": 172.443,
+      "minimum": 172.443,
+      "maximum": 172.443,
+      "reduction_percent": -68.77220455101542,
+      "paired_reduction_percent": [
+        -68.77220455101542
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 10,
+    "runs": 1,
+    "groupSide": 2048,
+    "cull_ms": {
+      "median": 268.161,
+      "minimum": 268.161,
+      "maximum": 268.161,
+      "reduction_percent": -3974.868747958091,
+      "paired_reduction_percent": [
+        -3974.868747958091
+      ]
+    },
+    "draw_ms": {
+      "median": 112.008,
+      "minimum": 112.008,
+      "maximum": 112.008
+    },
+    "total_ms": {
+      "median": 380.17,
+      "minimum": 380.17,
+      "maximum": 380.17,
+      "reduction_percent": -272.0773183264008,
+      "paired_reduction_percent": [
+        -272.0773183264008
+      ]
+    }
+  },
+  {
+    "phase": "screen",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 11,
+    "runs": 1,
+    "groupSide": 4096,
+    "cull_ms": {
+      "median": 396.411,
+      "minimum": 396.411,
+      "maximum": 396.411,
+      "reduction_percent": -5923.705144472219,
+      "paired_reduction_percent": [
+        -5923.705144472219
+      ]
+    },
+    "draw_ms": {
+      "median": 122.43,
+      "minimum": 122.43,
+      "maximum": 122.43
+    },
+    "total_ms": {
+      "median": 518.841,
+      "minimum": 518.841,
+      "maximum": 518.841,
+      "reduction_percent": -407.7964276975777,
+      "paired_reduction_percent": [
+        -407.7964276975777
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 0,
+    "runs": 4,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 0.12298300000000001,
+      "minimum": 0.118246,
+      "maximum": 0.137581,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 2.82641,
+      "minimum": 2.81165,
+      "maximum": 3.48338
+    },
+    "total_ms": {
+      "median": 2.94914,
+      "minimum": 2.92964,
+      "maximum": 3.61967,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 1,
+    "runs": 4,
+    "groupSide": 4,
+    "cull_ms": {
+      "median": 0.1345895,
+      "minimum": 0.122317,
+      "maximum": 0.287277,
+      "reduction_percent": -9.437483229389422,
+      "paired_reduction_percent": [
+        -3.4428225901933285,
+        -16.753079217439158,
+        -2.272599245149398,
+        -108.80572172029565
+      ]
+    },
+    "draw_ms": {
+      "median": 2.79372,
+      "minimum": 2.73386,
+      "maximum": 3.27231
+    },
+    "total_ms": {
+      "median": 2.926095,
+      "minimum": 2.85985,
+      "maximum": 3.55835,
+      "reduction_percent": 0.7814142427961968,
+      "paired_reduction_percent": [
+        2.3822039568001663,
+        -1.1619334897908118,
+        2.735333918140581,
+        1.6940770843751007
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 2,
+    "runs": 4,
+    "groupSide": 8,
+    "cull_ms": {
+      "median": 0.1209765,
+      "minimum": 0.108889,
+      "maximum": 0.166756,
+      "reduction_percent": 1.6315263085141862,
+      "paired_reduction_percent": [
+        -9.212150939566666,
+        7.303846248654522,
+        12.37214617384097,
+        -21.20568973913548
+      ]
+    },
+    "draw_ms": {
+      "median": 2.7822050000000003,
+      "minimum": 2.72708,
+      "maximum": 3.2415
+    },
+    "total_ms": {
+      "median": 2.9029249999999998,
+      "minimum": 2.83572,
+      "maximum": 3.40697,
+      "reduction_percent": 1.5670670093654415,
+      "paired_reduction_percent": [
+        1.0345981076173238,
+        1.7117890935160252,
+        3.5843244456231327,
+        5.876226285821639
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 0,
+    "runs": 4,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 0.393268,
+      "minimum": 0.37585,
+      "maximum": 0.444191,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 5.3395600000000005,
+      "minimum": 5.21442,
+      "maximum": 7.02952
+    },
+    "total_ms": {
+      "median": 5.72728,
+      "minimum": 5.6006,
+      "maximum": 7.47291,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 1,
+    "runs": 4,
+    "groupSide": 4,
+    "cull_ms": {
+      "median": 0.4734045,
+      "minimum": 0.436032,
+      "maximum": 0.699662,
+      "reduction_percent": -20.3770711067262,
+      "paired_reduction_percent": [
+        -8.979665287025362,
+        -19.257948649727275,
+        -29.020888539251423,
+        -57.513772228613355
+      ]
+    },
+    "draw_ms": {
+      "median": 5.41483,
+      "minimum": 5.23131,
+      "maximum": 5.8971
+    },
+    "total_ms": {
+      "median": 5.9885,
+      "minimum": 5.66708,
+      "maximum": 6.39542,
+      "reduction_percent": -4.560978335265609,
+      "paired_reduction_percent": [
+        -0.7380598553744067,
+        -3.6079945102075905,
+        -14.191693747098522,
+        20.543804220845697
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 2,
+    "runs": 4,
+    "groupSide": 8,
+    "cull_ms": {
+      "median": 0.3778285,
+      "minimum": 0.366927,
+      "maximum": 0.447828,
+      "reduction_percent": 3.925948716905514,
+      "paired_reduction_percent": [
+        7.580029192409976,
+        -2.66888386324331,
+        5.047459837694602,
+        -0.8187919160901558
+      ]
+    },
+    "draw_ms": {
+      "median": 5.941585,
+      "minimum": 5.24137,
+      "maximum": 6.59526
+    },
+    "total_ms": {
+      "median": 6.357915,
+      "minimum": 5.61089,
+      "maximum": 6.96193,
+      "reduction_percent": -11.01107331927198,
+      "paired_reduction_percent": [
+        0.2607740384957147,
+        -14.17738891748157,
+        -24.30685997928792,
+        18.90133830060846
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 3,
+    "runs": 4,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 0.40731700000000004,
+      "minimum": 0.383055,
+      "maximum": 0.460352,
+      "reduction_percent": -3.5723730382334784,
+      "paired_reduction_percent": [
+        2.26965988842901,
+        -12.707463083677005,
+        0.8738924312686414,
+        -3.6382997404269757
+      ]
+    },
+    "draw_ms": {
+      "median": 5.26243,
+      "minimum": 5.20258,
+      "maximum": 5.34919
+    },
+    "total_ms": {
+      "median": 5.6694949999999995,
+      "minimum": 5.58538,
+      "maximum": 5.80866,
+      "reduction_percent": 1.0089431632467893,
+      "paired_reduction_percent": [
+        -0.3816508934221696,
+        2.3510036026762715,
+        0.271756597507411,
+        22.27044083228622
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 4,
+    "runs": 4,
+    "groupSide": 32,
+    "cull_ms": {
+      "median": 0.46271249999999997,
+      "minimum": 0.414202,
+      "maximum": 0.531877,
+      "reduction_percent": -17.658314431888677,
+      "paired_reduction_percent": [
+        -20.002299402155433,
+        -10.204070772914719,
+        -15.23139905597879,
+        -19.740607081188056
+      ]
+    },
+    "draw_ms": {
+      "median": 5.2839,
+      "minimum": 5.23626,
+      "maximum": 5.6036
+    },
+    "total_ms": {
+      "median": 5.772015,
+      "minimum": 5.65021,
+      "maximum": 6.08348,
+      "reduction_percent": -0.78108630973166,
+      "paired_reduction_percent": [
+        -8.139989618811283,
+        3.0672499571109846,
+        -1.9772881476984638,
+        21.948879352220207
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 0,
+    "runs": 4,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 1.773705,
+      "minimum": 1.49737,
+      "maximum": 2.0039,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 21.00195,
+      "minimum": 18.169,
+      "maximum": 22.8276
+    },
+    "total_ms": {
+      "median": 22.73945,
+      "minimum": 20.1727,
+      "maximum": 24.3967,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 1,
+    "runs": 4,
+    "groupSide": 4,
+    "cull_ms": {
+      "median": 1.9016899999999999,
+      "minimum": 1.76954,
+      "maximum": 1.96697,
+      "reduction_percent": -7.215686937794041,
+      "paired_reduction_percent": [
+        2.0443653570056397,
+        6.896551724137923,
+        -31.361654100189007,
+        -12.76054776363833
+      ]
+    },
+    "draw_ms": {
+      "median": 21.6301,
+      "minimum": 20.5906,
+      "maximum": 22.8005
+    },
+    "total_ms": {
+      "median": 23.447400000000002,
+      "minimum": 22.528,
+      "maximum": 24.7672,
+      "reduction_percent": -3.1133118874906884,
+      "paired_reduction_percent": [
+        -1.426307448494435,
+        -14.804166026362363,
+        -6.44455618733264,
+        2.709382826365847
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 3,
+    "runs": 4,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 1.5521349999999998,
+      "minimum": 1.3406,
+      "maximum": 1.65546,
+      "reduction_percent": 12.49193073256264,
+      "paired_reduction_percent": [
+        21.81869654014924,
+        22.264085034183335,
+        -10.557844754469482,
+        14.572832299957305
+      ]
+    },
+    "draw_ms": {
+      "median": 21.8859,
+      "minimum": 20.1293,
+      "maximum": 26.1034
+    },
+    "total_ms": {
+      "median": 23.4378,
+      "minimum": 21.7845,
+      "maximum": 27.4437,
+      "reduction_percent": -3.0710945075628437,
+      "paired_reduction_percent": [
+        -7.923029822792094,
+        -13.542559994447934,
+        6.3745019920318775,
+        -12.48939405739302
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 5,
+    "runs": 4,
+    "groupSide": 64,
+    "cull_ms": {
+      "median": 1.494925,
+      "minimum": 1.29603,
+      "maximum": 1.63703,
+      "reduction_percent": 15.717382541065172,
+      "paired_reduction_percent": [
+        17.243139951064656,
+        35.32461699685613,
+        -3.691806300379996,
+        8.417182292629155
+      ]
+    },
+    "draw_ms": {
+      "median": 20.666800000000002,
+      "minimum": 19.622,
+      "maximum": 21.6016
+    },
+    "total_ms": {
+      "median": 22.1331,
+      "minimum": 21.0589,
+      "maximum": 23.154,
+      "reduction_percent": 2.666511283254447,
+      "paired_reduction_percent": [
+        -3.067821639533208,
+        -5.95309502446375,
+        0.48866024574840683,
+        13.681358544393296
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "runs": 4,
+    "groupSide": null,
+    "cull_ms": {
+      "median": 5.707795,
+      "minimum": 5.5529,
+      "maximum": 6.2845,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "draw_ms": {
+      "median": 96.04525000000001,
+      "minimum": 83.3661,
+      "maximum": 98.1687
+    },
+    "total_ms": {
+      "median": 101.964,
+      "minimum": 88.9336,
+      "maximum": 104.016,
+      "reduction_percent": 0.0,
+      "paired_reduction_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 2,
+    "runs": 4,
+    "groupSide": 8,
+    "cull_ms": {
+      "median": 5.30322,
+      "minimum": 4.76802,
+      "maximum": 5.70539,
+      "reduction_percent": 7.08811371116167,
+      "paired_reduction_percent": [
+        2.882744232972523,
+        -2.4731980408392085,
+        14.13459633704911,
+        21.5988543241308
+      ]
+    },
+    "draw_ms": {
+      "median": 91.3415,
+      "minimum": 86.418,
+      "maximum": 93.1808
+    },
+    "total_ms": {
+      "median": 96.6575,
+      "minimum": 91.1857,
+      "maximum": 98.8599,
+      "reduction_percent": 5.204287787846695,
+      "paired_reduction_percent": [
+        4.9570258421781315,
+        -9.917061717955878,
+        10.56542890209694,
+        6.2843973717760075
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "runs": 4,
+    "groupSide": 16,
+    "cull_ms": {
+      "median": 4.914955,
+      "minimum": 3.61303,
+      "maximum": 5.64005,
+      "reduction_percent": 13.890477846523918,
+      "paired_reduction_percent": [
+        38.21662477128541,
+        -1.2996413234213744,
+        14.190963280448054,
+        19.40456679131197
+      ]
+    },
+    "draw_ms": {
+      "median": 92.62360000000001,
+      "minimum": 89.411,
+      "maximum": 94.4493
+    },
+    "total_ms": {
+      "median": 97.2499,
+      "minimum": 94.1756,
+      "maximum": 99.5141,
+      "reduction_percent": 4.62329841904986,
+      "paired_reduction_percent": [
+        8.05154976157515,
+        -11.160123957649294,
+        7.632946899703796,
+        2.4084534667058954
+      ]
+    }
+  },
+  {
+    "phase": "confirm",
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 6,
+    "runs": 4,
+    "groupSide": 128,
+    "cull_ms": {
+      "median": 5.259080000000001,
+      "minimum": 5.121,
+      "maximum": 5.70468,
+      "reduction_percent": 7.861442115562999,
+      "paired_reduction_percent": [
+        2.4490842866670137,
+        4.800195413178521,
+        7.777917844729776,
+        16.974620097064207
+      ]
+    },
+    "draw_ms": {
+      "median": 96.00025,
+      "minimum": 88.5958,
+      "maximum": 100.552
+    },
+    "total_ms": {
+      "median": 101.4128,
+      "minimum": 93.896,
+      "maximum": 105.769,
+      "reduction_percent": 0.5405829508453919,
+      "paired_reduction_percent": [
+        0.356675896016001,
+        -5.57989331366322,
+        2.7240628494085817,
+        -3.7256055702657775
+      ]
+    }
+  }
+]

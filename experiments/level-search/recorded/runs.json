@@ -1,0 +1,3606 @@
+[
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 100,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.625552,
+    "draw_ms": 5.5186,
+    "total_ms": 6.1439,
+    "warmup_seconds": 5.43709,
+    "warmup_frames": 656,
+    "clock_samples": 14,
+    "clock_min_mhz": 1997.0,
+    "clock_median_mhz": 1998.0,
+    "clock_max_mhz": 1999.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.85564,
+    "draw_ms": 21.0524,
+    "total_ms": 22.9078,
+    "warmup_seconds": 5.02184,
+    "warmup_frames": 208,
+    "clock_samples": 40,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 409600,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 6.11929,
+    "draw_ms": 107.386,
+    "total_ms": 113.505,
+    "warmup_seconds": 5.06375,
+    "warmup_frames": 49,
+    "clock_samples": 26,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.113434,
+    "draw_ms": 2.70226,
+    "total_ms": 2.81544,
+    "warmup_seconds": 5.00441,
+    "warmup_frames": 603,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.5433,
+    "draw_ms": 23.1293,
+    "total_ms": 24.6723,
+    "warmup_seconds": 5.01092,
+    "warmup_frames": 194,
+    "clock_samples": 40,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 100,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 2.27997,
+    "draw_ms": 21.3538,
+    "total_ms": 23.6336,
+    "warmup_seconds": 5.01623,
+    "warmup_frames": 195,
+    "clock_samples": 39,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.40571,
+    "draw_ms": 5.86513,
+    "total_ms": 6.27059,
+    "warmup_seconds": 5.00351,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "95",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 8,
+    "mode": "grouped",
+    "groupSide": 512,
+    "groups": 1,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.22658,
+    "draw_ms": 2.70507,
+    "total_ms": 7.9314,
+    "warmup_seconds": 5.00215,
+    "warmup_frames": 513,
+    "clock_samples": 17,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 2.04466,
+    "draw_ms": 19.1179,
+    "total_ms": 21.1623,
+    "warmup_seconds": 5.00929,
+    "warmup_frames": 228,
+    "clock_samples": 36,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 100,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.168635,
+    "draw_ms": 2.76289,
+    "total_ms": 2.93127,
+    "warmup_seconds": 5.00695,
+    "warmup_frames": 603,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 10,
+    "mode": "grouped",
+    "groupSide": 2048,
+    "groups": 4,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 268.161,
+    "draw_ms": 112.008,
+    "total_ms": 380.17,
+    "warmup_seconds": 5.03268,
+    "warmup_frames": 15,
+    "clock_samples": 35,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 10,
+    "mode": "grouped",
+    "groupSide": 2048,
+    "groups": 1,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 94.5864,
+    "draw_ms": 24.8645,
+    "total_ms": 119.451,
+    "warmup_seconds": 5.06047,
+    "warmup_frames": 43,
+    "clock_samples": 151,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 6400,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 6.01104,
+    "draw_ms": 102.256,
+    "total_ms": 108.267,
+    "warmup_seconds": 5.02835,
+    "warmup_frames": 55,
+    "clock_samples": 26,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 25,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.425836,
+    "draw_ms": 2.77231,
+    "total_ms": 3.19789,
+    "warmup_seconds": 5.00476,
+    "warmup_frames": 604,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 25600,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.03322,
+    "draw_ms": 88.9215,
+    "total_ms": 93.9545,
+    "warmup_seconds": 5.09076,
+    "warmup_frames": 49,
+    "clock_samples": 22,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "96",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 9,
+    "mode": "grouped",
+    "groupSide": 1024,
+    "groups": 1,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 23.3904,
+    "draw_ms": 6.33665,
+    "total_ms": 29.7268,
+    "warmup_seconds": 5.00239,
+    "warmup_frames": 163,
+    "clock_samples": 49,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 8,
+    "mode": "grouped",
+    "groupSide": 512,
+    "groups": 25,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 14.6653,
+    "draw_ms": 98.2965,
+    "total_ms": 112.962,
+    "warmup_seconds": 5.04247,
+    "warmup_frames": 49,
+    "clock_samples": 27,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.46143,
+    "draw_ms": 5.43934,
+    "total_ms": 5.90052,
+    "warmup_seconds": 5.00727,
+    "warmup_frames": 603,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.158532,
+    "draw_ms": 2.81103,
+    "total_ms": 2.96931,
+    "warmup_seconds": 5.00341,
+    "warmup_frames": 603,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 9,
+    "mode": "grouped",
+    "groupSide": 1024,
+    "groups": 4,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 67.1412,
+    "draw_ms": 20.857,
+    "total_ms": 87.9979,
+    "warmup_seconds": 5.01425,
+    "warmup_frames": 59,
+    "clock_samples": 109,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.64327,
+    "draw_ms": 23.9299,
+    "total_ms": 25.5729,
+    "warmup_seconds": 5.01535,
+    "warmup_frames": 199,
+    "clock_samples": 43,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.114534,
+    "draw_ms": 2.77044,
+    "total_ms": 2.88472,
+    "warmup_seconds": 5.00798,
+    "warmup_frames": 603,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.419302,
+    "draw_ms": 5.38575,
+    "total_ms": 5.8048,
+    "warmup_seconds": 5.00311,
+    "warmup_frames": 601,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 7,
+    "mode": "grouped",
+    "groupSide": 256,
+    "groups": 9,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 4.90852,
+    "draw_ms": 6.25738,
+    "total_ms": 11.1656,
+    "warmup_seconds": 5.00343,
+    "warmup_frames": 426,
+    "clock_samples": 21,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.102377,
+    "draw_ms": 2.69518,
+    "total_ms": 2.79731,
+    "warmup_seconds": 5.00002,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 7,
+    "mode": "grouped",
+    "groupSide": 256,
+    "groups": 25,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.03102,
+    "draw_ms": 24.2529,
+    "total_ms": 29.2836,
+    "warmup_seconds": 5.03159,
+    "warmup_frames": 171,
+    "clock_samples": 47,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 9,
+    "mode": "grouped",
+    "groupSide": 1024,
+    "groups": 9,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 69.3815,
+    "draw_ms": 103.062,
+    "total_ms": 172.443,
+    "warmup_seconds": 5.16531,
+    "warmup_frames": 33,
+    "clock_samples": 35,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "97",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 1600,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.56204,
+    "draw_ms": 103.264,
+    "total_ms": 108.826,
+    "warmup_seconds": 5.06418,
+    "warmup_frames": 50,
+    "clock_samples": 26,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 400,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 4.59227,
+    "draw_ms": 87.7216,
+    "total_ms": 92.3136,
+    "warmup_seconds": 5.03898,
+    "warmup_frames": 53,
+    "clock_samples": 22,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 9,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.26551,
+    "draw_ms": 2.78512,
+    "total_ms": 4.05038,
+    "warmup_seconds": 5.0,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 8,
+    "mode": "grouped",
+    "groupSide": 512,
+    "groups": 4,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 14.8234,
+    "draw_ms": 5.82376,
+    "total_ms": 20.6469,
+    "warmup_seconds": 5.00672,
+    "warmup_frames": 212,
+    "clock_samples": 36,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 6.58085,
+    "draw_ms": 95.594,
+    "total_ms": 102.175,
+    "warmup_seconds": 5.06062,
+    "warmup_frames": 50,
+    "clock_samples": 23,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.36318,
+    "draw_ms": 5.7183,
+    "total_ms": 6.08123,
+    "warmup_seconds": 5.0003,
+    "warmup_frames": 597,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.52968,
+    "draw_ms": 21.1487,
+    "total_ms": 22.6782,
+    "warmup_seconds": 5.00312,
+    "warmup_frames": 194,
+    "clock_samples": 38,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 8,
+    "mode": "grouped",
+    "groupSide": 512,
+    "groups": 9,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 18.1837,
+    "draw_ms": 20.0106,
+    "total_ms": 38.194,
+    "warmup_seconds": 5.03262,
+    "warmup_frames": 124,
+    "clock_samples": 59,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 7,
+    "mode": "grouped",
+    "groupSide": 256,
+    "groups": 100,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 7.895,
+    "draw_ms": 91.0017,
+    "total_ms": 98.8965,
+    "warmup_seconds": 5.08029,
+    "warmup_frames": 57,
+    "clock_samples": 24,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 7,
+    "mode": "grouped",
+    "groupSide": 256,
+    "groups": 4,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 3.62484,
+    "draw_ms": 2.86481,
+    "total_ms": 6.4894,
+    "warmup_seconds": 5.00048,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 25,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.27105,
+    "draw_ms": 5.71592,
+    "total_ms": 6.98672,
+    "warmup_seconds": 5.00118,
+    "warmup_frames": 601,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.48977,
+    "draw_ms": 19.2948,
+    "total_ms": 20.7844,
+    "warmup_seconds": 5.00823,
+    "warmup_frames": 227,
+    "clock_samples": 36,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 11,
+    "mode": "grouped",
+    "groupSide": 4096,
+    "groups": 1,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 396.411,
+    "draw_ms": 122.43,
+    "total_ms": 518.841,
+    "warmup_seconds": 5.11199,
+    "warmup_frames": 12,
+    "clock_samples": 35,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "98",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 102400,
+    "samples": 36,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.37506,
+    "draw_ms": 83.7006,
+    "total_ms": 89.0754,
+    "warmup_seconds": 5.04023,
+    "warmup_frames": 59,
+    "clock_samples": 21,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "screen",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.442192,
+    "draw_ms": 5.23615,
+    "total_ms": 5.67808,
+    "warmup_seconds": 5.00203,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.129139,
+    "draw_ms": 2.77045,
+    "total_ms": 2.89933,
+    "warmup_seconds": 5.00654,
+    "warmup_frames": 603,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.118246,
+    "draw_ms": 2.81165,
+    "total_ms": 2.92964,
+    "warmup_seconds": 5.00204,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.122317,
+    "draw_ms": 2.73778,
+    "total_ms": 2.85985,
+    "warmup_seconds": 5.00401,
+    "warmup_frames": 603,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.436032,
+    "draw_ms": 5.23131,
+    "total_ms": 5.66708,
+    "warmup_seconds": 5.0017,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.369776,
+    "draw_ms": 5.24137,
+    "total_ms": 5.61089,
+    "warmup_seconds": 5.00847,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.480134,
+    "draw_ms": 5.6036,
+    "total_ms": 6.08348,
+    "warmup_seconds": 5.00312,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.391023,
+    "draw_ms": 5.25626,
+    "total_ms": 5.64703,
+    "warmup_seconds": 5.00355,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.400104,
+    "draw_ms": 5.22571,
+    "total_ms": 5.62556,
+    "warmup_seconds": 5.0013,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.97812,
+    "draw_ms": 20.2333,
+    "total_ms": 22.2112,
+    "warmup_seconds": 5.0141,
+    "warmup_frames": 218,
+    "clock_samples": 39,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.63703,
+    "draw_ms": 21.2558,
+    "total_ms": 22.8926,
+    "warmup_seconds": 5.01435,
+    "warmup_frames": 234,
+    "clock_samples": 40,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.93768,
+    "draw_ms": 20.5906,
+    "total_ms": 22.528,
+    "warmup_seconds": 5.02343,
+    "warmup_frames": 206,
+    "clock_samples": 39,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.54652,
+    "draw_ms": 22.4247,
+    "total_ms": 23.971,
+    "warmup_seconds": 5.01065,
+    "warmup_frames": 189,
+    "clock_samples": 41,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 3.61303,
+    "draw_ms": 92.0283,
+    "total_ms": 95.6411,
+    "warmup_seconds": 5.02125,
+    "warmup_frames": 55,
+    "clock_samples": 123,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.8479,
+    "draw_ms": 98.1687,
+    "total_ms": 104.016,
+    "warmup_seconds": 5.04971,
+    "warmup_frames": 50,
+    "clock_samples": 127,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.67932,
+    "draw_ms": 93.1808,
+    "total_ms": 98.8599,
+    "warmup_seconds": 5.10806,
+    "warmup_frames": 51,
+    "clock_samples": 122,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 1,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.70468,
+    "draw_ms": 97.9406,
+    "total_ms": 103.645,
+    "warmup_seconds": 5.03431,
+    "warmup_frames": 52,
+    "clock_samples": 130,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.30043,
+    "draw_ms": 88.5958,
+    "total_ms": 93.896,
+    "warmup_seconds": 5.02853,
+    "warmup_frames": 53,
+    "clock_samples": 118,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "99",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.70539,
+    "draw_ms": 92.0481,
+    "total_ms": 97.7532,
+    "warmup_seconds": 5.02511,
+    "warmup_frames": 51,
+    "clock_samples": 120,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.56769,
+    "draw_ms": 83.3661,
+    "total_ms": 88.9336,
+    "warmup_seconds": 5.04782,
+    "warmup_frames": 55,
+    "clock_samples": 111,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.64005,
+    "draw_ms": 93.2189,
+    "total_ms": 98.8587,
+    "warmup_seconds": 5.07882,
+    "warmup_frames": 53,
+    "clock_samples": 117,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.55775,
+    "draw_ms": 21.3471,
+    "total_ms": 22.9046,
+    "warmup_seconds": 5.01647,
+    "warmup_frames": 214,
+    "clock_samples": 38,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.8657,
+    "draw_ms": 21.2937,
+    "total_ms": 23.1591,
+    "warmup_seconds": 5.02762,
+    "warmup_frames": 203,
+    "clock_samples": 40,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.29603,
+    "draw_ms": 20.0778,
+    "total_ms": 21.3736,
+    "warmup_seconds": 5.00936,
+    "warmup_frames": 202,
+    "clock_samples": 38,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 2.0039,
+    "draw_ms": 18.169,
+    "total_ms": 20.1727,
+    "warmup_seconds": 5.00643,
+    "warmup_frames": 232,
+    "clock_samples": 35,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.37585,
+    "draw_ms": 5.45341,
+    "total_ms": 5.829,
+    "warmup_seconds": 5.0025,
+    "warmup_frames": 601,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.423611,
+    "draw_ms": 5.2686,
+    "total_ms": 5.69196,
+    "warmup_seconds": 5.00576,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.414202,
+    "draw_ms": 5.23626,
+    "total_ms": 5.65021,
+    "warmup_seconds": 5.00264,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.385881,
+    "draw_ms": 6.26977,
+    "total_ms": 6.6554,
+    "warmup_seconds": 5.00418,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.448231,
+    "draw_ms": 5.59133,
+    "total_ms": 6.03931,
+    "warmup_seconds": 5.00112,
+    "warmup_frames": 601,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.142092,
+    "draw_ms": 2.84966,
+    "total_ms": 2.9915,
+    "warmup_seconds": 5.00204,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.121703,
+    "draw_ms": 2.83569,
+    "total_ms": 2.95714,
+    "warmup_seconds": 5.00523,
+    "warmup_frames": 603,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 2,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.112814,
+    "draw_ms": 2.79396,
+    "total_ms": 2.90652,
+    "warmup_seconds": 5.00154,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.124263,
+    "draw_ms": 2.81713,
+    "total_ms": 2.94114,
+    "warmup_seconds": 5.00163,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.127087,
+    "draw_ms": 2.73386,
+    "total_ms": 2.86069,
+    "warmup_seconds": 5.00786,
+    "warmup_frames": 603,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.108889,
+    "draw_ms": 2.72708,
+    "total_ms": 2.83572,
+    "warmup_seconds": 5.00309,
+    "warmup_frames": 602,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.366927,
+    "draw_ms": 6.59526,
+    "total_ms": 6.96193,
+    "warmup_seconds": 5.00705,
+    "warmup_frames": 538,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.445291,
+    "draw_ms": 5.26631,
+    "total_ms": 5.71134,
+    "warmup_seconds": 5.00189,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.383055,
+    "draw_ms": 5.20258,
+    "total_ms": 5.58538,
+    "warmup_seconds": 5.00052,
+    "warmup_frames": 602,
+    "clock_samples": 15,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.386432,
+    "draw_ms": 5.21442,
+    "total_ms": 5.6006,
+    "warmup_seconds": 5.00424,
+    "warmup_frames": 601,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.498578,
+    "draw_ms": 5.8971,
+    "total_ms": 6.39542,
+    "warmup_seconds": 5.00552,
+    "warmup_frames": 601,
+    "clock_samples": 14,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.55265,
+    "draw_ms": 21.6016,
+    "total_ms": 23.154,
+    "warmup_seconds": 5.01064,
+    "warmup_frames": 209,
+    "clock_samples": 39,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.96697,
+    "draw_ms": 22.8005,
+    "total_ms": 24.7672,
+    "warmup_seconds": 5.01647,
+    "warmup_frames": 206,
+    "clock_samples": 42,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.65546,
+    "draw_ms": 20.1293,
+    "total_ms": 21.7845,
+    "warmup_seconds": 5.02115,
+    "warmup_frames": 220,
+    "clock_samples": 39,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.49737,
+    "draw_ms": 21.7706,
+    "total_ms": 23.2677,
+    "warmup_seconds": 5.00883,
+    "warmup_frames": 188,
+    "clock_samples": 44,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.5529,
+    "draw_ms": 96.4051,
+    "total_ms": 101.958,
+    "warmup_seconds": 5.00309,
+    "warmup_frames": 49,
+    "clock_samples": 128,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 4.76802,
+    "draw_ms": 86.418,
+    "total_ms": 91.1857,
+    "warmup_seconds": 5.01084,
+    "warmup_frames": 53,
+    "clock_samples": 114,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.121,
+    "draw_ms": 94.0599,
+    "total_ms": 99.1806,
+    "warmup_seconds": 5.0751,
+    "warmup_frames": 57,
+    "clock_samples": 121,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 3,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 4.76489,
+    "draw_ms": 89.411,
+    "total_ms": 94.1756,
+    "warmup_seconds": 5.00573,
+    "warmup_frames": 54,
+    "clock_samples": 117,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.06502,
+    "draw_ms": 94.4493,
+    "total_ms": 99.5141,
+    "warmup_seconds": 5.12533,
+    "warmup_frames": 53,
+    "clock_samples": 116,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 6,
+    "mode": "grouped",
+    "groupSide": 128,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 5.21773,
+    "draw_ms": 100.552,
+    "total_ms": 105.769,
+    "warmup_seconds": 5.03033,
+    "warmup_frames": 48,
+    "clock_samples": 130,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 4.92712,
+    "draw_ms": 90.6349,
+    "total_ms": 95.5618,
+    "warmup_seconds": 5.08871,
+    "warmup_frames": 52,
+    "clock_samples": 115,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 2560,
+    "sphereCount": 6553600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 6.2845,
+    "draw_ms": 95.6854,
+    "total_ms": 101.97,
+    "warmup_seconds": 5.06453,
+    "warmup_frames": 53,
+    "clock_samples": 125,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.56929,
+    "draw_ms": 22.8276,
+    "total_ms": 24.3967,
+    "warmup_seconds": 5.01663,
+    "warmup_frames": 105,
+    "clock_samples": 68,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.3406,
+    "draw_ms": 26.1034,
+    "total_ms": 27.4437,
+    "warmup_seconds": 5.03507,
+    "warmup_frames": 105,
+    "clock_samples": 69,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 102400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.76954,
+    "draw_ms": 21.9665,
+    "total_ms": 23.7357,
+    "warmup_seconds": 5.01314,
+    "warmup_frames": 105,
+    "clock_samples": 67,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 1280,
+    "sphereCount": 1638400,
+    "level": 5,
+    "mode": "grouped",
+    "groupSide": 64,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 1.4372,
+    "draw_ms": 19.622,
+    "total_ms": 21.0589,
+    "warmup_seconds": 5.03994,
+    "warmup_frames": 105,
+    "clock_samples": 71,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 25600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.699662,
+    "draw_ms": 5.23833,
+    "total_ms": 5.93769,
+    "warmup_seconds": 5.02854,
+    "warmup_frames": 105,
+    "clock_samples": 70,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.444191,
+    "draw_ms": 7.02952,
+    "total_ms": 7.47291,
+    "warmup_seconds": 5.00465,
+    "warmup_frames": 105,
+    "clock_samples": 72,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 3,
+    "mode": "grouped",
+    "groupSide": 16,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.460352,
+    "draw_ms": 5.34919,
+    "total_ms": 5.80866,
+    "warmup_seconds": 5.02071,
+    "warmup_frames": 105,
+    "clock_samples": 69,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 4,
+    "mode": "grouped",
+    "groupSide": 32,
+    "groups": 400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.531877,
+    "draw_ms": 5.30149,
+    "total_ms": 5.83269,
+    "warmup_seconds": 5.03197,
+    "warmup_frames": 105,
+    "clock_samples": 68,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 640,
+    "sphereCount": 409600,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.447828,
+    "draw_ms": 5.6134,
+    "total_ms": 6.06043,
+    "warmup_seconds": 5.0019,
+    "warmup_frames": 105,
+    "clock_samples": 69,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 2,
+    "mode": "grouped",
+    "groupSide": 8,
+    "groups": 1600,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.166756,
+    "draw_ms": 3.2415,
+    "total_ms": 3.40697,
+    "warmup_seconds": 5.02154,
+    "warmup_frames": 105,
+    "clock_samples": 69,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 1,
+    "mode": "grouped",
+    "groupSide": 4,
+    "groups": 6400,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.287277,
+    "draw_ms": 3.27231,
+    "total_ms": 3.55835,
+    "warmup_seconds": 5.0049,
+    "warmup_frames": 105,
+    "clock_samples": 69,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  },
+  {
+    "phase": "confirm",
+    "repeat": 4,
+    "gridSide": 320,
+    "sphereCount": 102400,
+    "level": 0,
+    "mode": "per-object",
+    "groupSide": null,
+    "groups": null,
+    "samples": 180,
+    "extent": [
+      1536,
+      864
+    ],
+    "cull_ms": 0.137581,
+    "draw_ms": 3.48338,
+    "total_ms": 3.61967,
+    "warmup_seconds": 5.01214,
+    "warmup_frames": 105,
+    "clock_samples": 72,
+    "clock_min_mhz": 2000.0,
+    "clock_median_mhz": 2000.0,
+    "clock_max_mhz": 2000.0,
+    "power_before": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    },
+    "power_after": {
+      "ac": "1",
+      "battery": "100",
+      "policy": "manual"
+    }
+  }
+]
